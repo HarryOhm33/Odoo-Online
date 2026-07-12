@@ -1,4 +1,4 @@
-# JWT Authentication with OTP Verification & Cron Jobs Cleanup
+<!-- # JWT Authentication with OTP Verification & Cron Jobs Cleanup
 
 ## 🚀 Project Overview
 
@@ -101,4 +101,4 @@ This project is licensed under the MIT License.
 ---
 
 🌟 **Contributions & Suggestions Welcome!** 🌟
-Feel free to fork, raise issues, or suggest improvements. Let’s connect and learn together! 🚀
+Feel free to fork, raise issues, or suggest improvements. Let’s connect and learn together! 🚀 -->

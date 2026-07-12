@@ -14,6 +14,14 @@ const port = process.env.PORT;
 
 const ExpressError = require("./utils/ExpressError");
 const authRoute = require("./routes/authRoute");
+const employeeRoute = require("./routes/employeeRoute");
+const departmentRoute = require("./routes/departmentRoute");
+const assetCategoryRoute = require("./routes/assetCategoryRoute");
+const assetRoute = require("./routes/assetRoute");
+const bookingRoute = require("./routes/bookingRoute");
+const maintenanceRoute = require("./routes/maintenanceRoute");
+const auditRoute = require("./routes/auditRoute");
+const notificationRoute = require("./routes/notificationRoute");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -28,6 +36,15 @@ corsOptions = {
 app.use(cors(corsOptions)); // ✅ CORS Middleware
 
 app.use("/api/auth", authRoute);
+app.use("/api/employees", employeeRoute);
+app.use("/api/departments", departmentRoute);
+app.use("/api/categories", assetCategoryRoute);
+app.use("/api/assets", assetRoute);
+app.use("/api/bookings", bookingRoute);
+app.use("/api/maintenance", maintenanceRoute);
+app.use("/api/audits", auditRoute);
+app.use("/api/notifications", notificationRoute);
+
 
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Not a Valid Route"));
