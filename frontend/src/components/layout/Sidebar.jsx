@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, onToggle, isMobileOpen, onMobileClose }) => {
         </div>
         {!collapsed && (
           <div className="min-w-0 flex-1">
-            <p className="text-white font-bold text-sm leading-tight tracking-wide">AssetERP</p>
+            <p className="text-white font-bold text-sm leading-tight tracking-wide">AssetFlow</p>
             <p className="text-slate-400 text-xs truncate leading-tight mt-0.5">
               {user?.organization?.name || "Enterprise Portal"}
             </p>

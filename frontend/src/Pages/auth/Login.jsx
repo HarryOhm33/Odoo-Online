@@ -23,7 +23,7 @@ const Login = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl mb-4">
             <span className="text-white font-bold text-2xl">A</span>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">AssetERP</h1>
+          <h1 className="text-2xl font-bold text-white mb-1">AssetFlow</h1>
           <p className="text-gray-400 text-sm">Sign in to your account</p>
         </div>
 
@@ -83,7 +83,7 @@ const Login = () => {
 
         <div className="mt-6 pt-6 border-t border-gray-700 text-center">
           <p className="text-gray-500 text-xs">
-            New to AssetERP? Contact your administrator to set up your account.
+            New to AssetFlow? Contact your administrator to set up your account.
           </p>
           <p className="text-gray-600 text-xs mt-2">
             First time setup?{" "}

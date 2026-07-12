@@ -40,7 +40,7 @@ const Signup = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl mb-4">
             <span className="text-white font-bold text-2xl">A</span>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">AssetERP</h1>
+          <h1 className="text-2xl font-bold text-white mb-1">AssetFlow Setup</h1>
           <p className="text-gray-400 text-sm">Create an employee account</p>
         </div>
 
@@ -114,7 +114,7 @@ const Signup = () => {
         </form>
 
         <p className="text-center text-gray-500 text-xs mt-6">
-          Already have an account?{" "}
+          Already use AssetFlow?{" "}
           <Link to="/auth/login" className="text-blue-400 hover:text-blue-300">
             Sign In
           </Link>
