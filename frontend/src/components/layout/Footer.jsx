@@ -1,13 +1,14 @@
 
 
 
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import { motion } from "framer-motion";
 import {
   Boxes,
   Mail,
   Phone,
   MapPin,
-  ArrowUpRight,
 } from "lucide-react";
 
 import {
@@ -46,6 +47,64 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLinkClick = (name, type) => {
+    if (type === "quick") {
+      if (name === "Home") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (name === "Features") {
+        const headings = Array.from(document.querySelectorAll("h2"));
+        const target = headings.find((h) => h.textContent.includes("Everything Required"));
+        if (target) {
+          const section = target.closest("section");
+          if (section) {
+            const yOffset = -90;
+            const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: "smooth" });
+          }
+        }
+      } else if (name === "Workflow") {
+        const headings = Array.from(document.querySelectorAll("h2"));
+        const target = headings.find((h) => h.textContent.includes("Complete"));
+        if (target) {
+          const section = target.closest("section");
+          if (section) {
+            const yOffset = -90;
+            const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: "smooth" });
+          }
+        }
+      } else if (name === "Dashboard") {
+        if (!user) {
+          navigate("/auth/login");
+        } else if (user.role === "Admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/app/dashboard");
+        }
+      }
+    } else if (type === "module") {
+      if (!user) {
+        navigate("/auth/login");
+        return;
+      }
+
+      const isAdmin = user.role === "Admin";
+
+      if (name === "Asset Management") {
+        navigate(isAdmin ? "/admin/dashboard" : "/app/assets");
+      } else if (name === "Resource Booking") {
+        navigate(isAdmin ? "/admin/dashboard" : "/app/bookings");
+      } else if (name === "Maintenance") {
+        navigate(isAdmin ? "/admin/dashboard" : "/app/maintenance");
+      } else if (name === "Analytics") {
+        navigate(isAdmin ? "/admin/analytics" : "/app/dashboard");
+      }
+    }
+  };
+
   return (
     <footer className="relative overflow-hidden border-t border-white/10 bg-[#08111F]">
       {/* Background Glow */}
@@ -123,14 +182,13 @@ export default function Footer() {
                 <a
                   key={item}
                   href="#"
-                  className="group flex items-center justify-between text-slate-400 transition hover:text-cyan-400"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLinkClick(item, "quick");
+                  }}
+                  className="block text-slate-400 transition hover:text-cyan-400"
                 >
                   {item}
-
-                  <ArrowUpRight
-                    size={18}
-                    className="opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100"
-                  />
                 </a>
               ))}
             </div>
@@ -152,14 +210,13 @@ export default function Footer() {
                 <a
                   key={item}
                   href="#"
-                  className="group flex items-center justify-between text-slate-400 transition hover:text-cyan-400"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLinkClick(item, "module");
+                  }}
+                  className="block text-slate-400 transition hover:text-cyan-400"
                 >
                   {item}
-
-                  <ArrowUpRight
-                    size={18}
-                    className="opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100"
-                  />
                 </a>
               ))}
             </div>
@@ -178,13 +235,18 @@ export default function Footer() {
 
             <div className="space-y-5">
               <div className="flex items-start gap-4">
-                <Mail className="mt-1 text-cyan-400" />
+                <Mail className="mt-1 text-cyan-400 animate-pulse" />
 
                 <div>
                   <p className="text-sm text-slate-500">Email</p>
-                  <p className="text-slate-300">
+                  <a
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=assetflow@example.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-300 transition hover:text-cyan-400 font-medium"
+                  >
                     assetflow@example.com
-                  </p>
+                  </a>
                 </div>
               </div>
 
@@ -193,20 +255,28 @@ export default function Footer() {
 
                 <div>
                   <p className="text-sm text-slate-500">Phone</p>
-                  <p className="text-slate-300">
+                  <a
+                    href="tel:+919876543210"
+                    className="text-slate-300 transition hover:text-cyan-400 font-medium"
+                  >
                     +91 98765 43210
-                  </p>
+                  </a>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
-                <MapPin className="mt-1 text-cyan-400" />
+                <MapPin className="mt-1 text-cyan-400 animate-bounce" />
 
                 <div>
                   <p className="text-sm text-slate-500">Address</p>
-                  <p className="text-slate-300">
+                  <a
+                    href="https://maps.google.com/?q=Bengaluru,India"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-300 transition hover:text-cyan-400 font-medium"
+                  >
                     Bengaluru, India
-                  </p>
+                  </a>
                 </div>
               </div>
             </div>
