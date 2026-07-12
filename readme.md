@@ -80,14 +80,15 @@ AssetFlow (formerly Odoo-Online) is a modern, full-stack Enterprise Asset Manage
    ```
    Create a `.env` file in the `backend` directory and add the following variables:
    ```env
-   PORT=5000
+   PORT=8001
    MONGO_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret_key
-   # Email Config (Optional)
-   SMTP_HOST=your_smtp_host
-   SMTP_PORT=your_smtp_port
-   SMTP_USER=your_smtp_user
-   SMTP_PASS=your_smtp_pass
+   # AWS SES Email Config
+   AWS_ACCESS_KEY_ID=your_aws_access_key
+   AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+   AWS_REGION=your_aws_region
+   SES_FROM_EMAIL=your_verified_sender_email
+   FRONTEND_URL=http://localhost:5173
    ```
    Start the backend development server:
    ```bash
@@ -102,7 +103,7 @@ AssetFlow (formerly Odoo-Online) is a modern, full-stack Enterprise Asset Manage
    ```
    Create a `.env` file in the `frontend` directory if you need to override the API URL (defaults to localhost:5000):
    ```env
-   VITE_API_URL=http://localhost:5000
+   VITE_API_URL=http://localhost:8001
    ```
    Start the frontend development server:
    ```bash
