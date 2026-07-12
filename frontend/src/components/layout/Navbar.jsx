@@ -226,35 +226,33 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   Menu,
   X,
   ArrowRight,
   Boxes,
+  LogOut,
+  LayoutDashboard
 } from "lucide-react";
 
 const navLinks = [
   {
     name: "Home",
-    href: "#",
+    href: "/",
   },
   {
-    name: "Features",
-    href: "#features",
-  },
-  {
-    name: "Workflow",
-    href: "#workflow",
-  },
-  {
-    name: "About",
-    href: "#about",
+    name: "Admin Setup",
+    href: "/setup",
   },
 ];
 
 export default function Navbar() {
+  const { user, logout, loading }   = useAuth();
+  const navigate                    = useNavigate();
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled]     = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -266,6 +264,20 @@ export default function Navbar() {
     return () =>
       window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleDashboardRedirect = () => {
+    if (user.role === "Admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/app/dashboard");
+    }
+    setMobileMenu(false);
+  };
+
+  const handleLogoutClick = async () => {
+    await logout();
+    setMobileMenu(false);
+  };
 
   return (
     <>
@@ -293,6 +305,7 @@ export default function Navbar() {
             whileHover={{
               scale: 1.05,
             }}
+            onClick={() => navigate("/")}
             className="flex cursor-pointer items-center gap-3"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 shadow-[0_0_35px_rgba(59,130,246,.35)]">
@@ -324,15 +337,15 @@ export default function Navbar() {
           <div className="hidden items-center gap-10 lg:flex">
 
             {navLinks.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className="relative font-medium text-slate-300 transition hover:text-cyan-400"
               >
                 {item.name}
 
                 <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-cyan-400 transition-all duration-300 hover:w-full" />
-              </a>
+              </Link>
             ))}
 
           </div>
@@ -341,38 +354,63 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-4 lg:flex">
 
-            <button className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10">
+            {loading ? (
+              <span className="text-slate-400 text-sm animate-pulse">Loading...</span>
+            ) : user ? (
+              <>
+                <button
+                  onClick={handleDashboardRedirect}
+                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10 cursor-pointer"
+                >
+                  <LayoutDashboard size={16} />
+                  Dashboard
+                </button>
+                <button
+                  onClick={handleLogoutClick}
+                  className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/20 cursor-pointer"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/auth/login")}
+                  className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10 cursor-pointer"
+                >
+                  Login
+                </button>
 
-              Login
+                <motion.button
+                  whileHover={{
+                    scale: 1.05,
+                  }}
+                  whileTap={{
+                    scale: .95,
+                  }}
+                  onClick={() => navigate("/auth/signup")}
+                  className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white shadow-[0_0_30px_rgba(59,130,246,.35)] cursor-pointer"
+                >
 
-            </button>
+                  Get Started
 
-            <motion.button
-              whileHover={{
-                scale: 1.05,
-              }}
-              whileTap={{
-                scale: .95,
-              }}
-              className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white shadow-[0_0_30px_rgba(59,130,246,.35)]"
-            >
+                  <ArrowRight
+                    size={18}
+                    className="transition group-hover:translate-x-1"
+                  />
 
-              Get Started
-
-              <ArrowRight
-                size={18}
-                className="transition group-hover:translate-x-1"
-              />
-
-            </motion.button>
+                </motion.button>
+              </>
+            )}
 
           </div>
 
-          {/* Mobile */}
+          {/* Mobile Menu Trigger */}
 
           <button
             onClick={() => setMobileMenu(!mobileMenu)}
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white lg:hidden"
+            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white lg:hidden cursor-pointer"
           >
 
             {mobileMenu ? <X /> : <Menu />}
@@ -408,32 +446,57 @@ export default function Navbar() {
 
               {navLinks.map((item) => (
 
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   onClick={() => setMobileMenu(false)}
                   className="block text-lg font-medium text-slate-300 transition hover:text-cyan-400"
                 >
 
                   {item.name}
 
-                </a>
+                </Link>
 
               ))}
 
               <hr className="border-white/10" />
 
-              <button className="w-full rounded-xl border border-white/10 bg-white/5 py-3 text-white">
+              {loading ? (
+                <div className="text-center text-slate-400 animate-pulse text-sm">Loading...</div>
+              ) : user ? (
+                <div className="space-y-3">
+                  <button
+                    onClick={handleDashboardRedirect}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-white cursor-pointer"
+                  >
+                    <LayoutDashboard size={18} />
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={handleLogoutClick}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-600/20 text-red-400 py-3 font-semibold cursor-pointer"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <button
+                    onClick={() => { navigate("/auth/login"); setMobileMenu(false); }}
+                    className="w-full rounded-xl border border-white/10 bg-white/5 py-3 text-white cursor-pointer"
+                  >
+                    Login
+                  </button>
 
-                Login
-
-              </button>
-
-              <button className="mt-4 w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3 font-semibold text-white">
-
-                Get Started
-
-              </button>
+                  <button
+                    onClick={() => { navigate("/auth/signup"); setMobileMenu(false); }}
+                    className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3 font-semibold text-white cursor-pointer"
+                  >
+                    Get Started
+                  </button>
+                </div>
+              )}
 
             </div>
 
