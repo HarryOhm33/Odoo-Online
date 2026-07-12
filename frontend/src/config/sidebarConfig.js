@@ -37,7 +37,7 @@ const sidebarConfig = {
   // ── Employee Portal ───────────────────────────────────────────────────────
   Employee: [
     { title: "Dashboard",           icon: FiGrid,     route: "/app/dashboard"     },
-    { title: "My Assets",           icon: FiBox,      route: "/app/assets"        },
+    { title: "Assets",              icon: FiBox,      route: "/app/assets"        },
     { title: "Bookings",            icon: FiCalendar, route: "/app/bookings"      },
     { title: "Maintenance Requests",icon: FiTool,     route: "/app/maintenance"   },
     { title: "Notifications",       icon: FiBell,     route: "/app/notifications" },
@@ -47,8 +47,7 @@ const sidebarConfig = {
   // ── Department Head Portal ────────────────────────────────────────────────
   DepartmentHead: [
     { title: "Dashboard",          icon: FiGrid,        route: "/app/dashboard"     },
-    { title: "My Assets",          icon: FiBox,         route: "/app/assets"        },
-    { title: "Department Assets",  icon: FiPackage,     route: "/app/allocations"   },
+    { title: "Assets",             icon: FiBox,         route: "/app/assets"        },
     { title: "Bookings",           icon: FiCalendar,    route: "/app/bookings"      },
     { title: "Transfer Requests",  icon: FiRefreshCw,   route: "/app/transfers"     },
     { title: "Transfer Approvals", icon: FiCheckSquare, route: "/app/transfers/approvals" },

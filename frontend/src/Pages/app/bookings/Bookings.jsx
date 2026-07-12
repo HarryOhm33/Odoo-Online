@@ -66,9 +66,9 @@ const Bookings = () => {
       if (!can("booking:view_all")) {
         if (can("booking:department")) {
           // Assume backend populate user department, fallback to filtering by own
-          allBookings = allBookings.filter(b => b.user?.department === user.department || b.user?._id === user._id);
+          allBookings = allBookings.filter(b => b.user?.department === user.department || b.user?._id === user.id);
         } else {
-          allBookings = allBookings.filter(b => b.user?._id === user._id);
+          allBookings = allBookings.filter(b => b.user?._id === user.id);
         }
       }
       

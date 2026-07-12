@@ -56,6 +56,9 @@ module.exports.createBooking = async (req, res) => {
     status: "Upcoming",
   });
 
+  asset.status = "Reserved";
+  await asset.save();
+
   res.status(201).json({ success: true, booking });
 };
 
@@ -73,6 +76,15 @@ module.exports.cancelBooking = async (req, res) => {
 
   booking.status = "Cancelled";
   await booking.save();
+
+  const otherBookings = await Booking.countDocuments({
+    asset: booking.asset,
+    status: { $in: ["Upcoming", "Ongoing"] }
+  });
+
+  if (otherBookings === 0) {
+    await Asset.findByIdAndUpdate(booking.asset, { status: "Available" });
+  }
 
   res.status(200).json({ success: true, booking });
 };

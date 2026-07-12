@@ -6,16 +6,23 @@ module.exports.getAssets = async (req, res) => {
   let query = { organization: req.user.organization };
 
   if (req.user.role === "Employee") {
-    query.assignedTo = req.user.id;
+    query.$or = [
+      { assignedTo: req.user.id },
+      { sharedBookable: true }
+    ];
   } else if (req.user.role === "DepartmentHead") {
     const me = await User.findById(req.user.id);
     if (me?.department) {
       query.$or = [
         { department: me.department },
-        { assignedTo: req.user.id }
+        { assignedTo: req.user.id },
+        { sharedBookable: true }
       ];
     } else {
-      query.assignedTo = req.user.id;
+      query.$or = [
+        { assignedTo: req.user.id },
+        { sharedBookable: true }
+      ];
     }
   }
 

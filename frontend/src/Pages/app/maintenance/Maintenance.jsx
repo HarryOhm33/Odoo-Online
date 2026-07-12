@@ -47,9 +47,9 @@ const Maintenance = () => {
       if (!can("maintenance:view_all")) {
         if (can("maintenance:view_dept")) {
           // Fallback logic for department filtering
-          allRequests = allRequests.filter(r => r.reportedBy?.department === user.department || r.reportedBy?._id === user._id);
+          allRequests = allRequests.filter(r => r.reportedBy?.department === user.department || r.reportedBy?._id === user.id);
         } else {
-          allRequests = allRequests.filter(r => r.reportedBy?._id === user._id);
+          allRequests = allRequests.filter(r => r.reportedBy?._id === user.id);
         }
       }
 
