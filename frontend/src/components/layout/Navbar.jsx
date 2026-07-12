@@ -389,7 +389,7 @@ export default function Navbar() {
                   whileTap={{
                     scale: .95,
                   }}
-                  onClick={() => navigate("/auth/signup")}
+                  onClick={() => navigate("/setup")}
                   className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white shadow-[0_0_30px_rgba(59,130,246,.35)] cursor-pointer"
                 >
 
@@ -490,7 +490,7 @@ export default function Navbar() {
                   </button>
 
                   <button
-                    onClick={() => { navigate("/auth/signup"); setMobileMenu(false); }}
+                    onClick={() => { navigate("/setup"); setMobileMenu(false); }}
                     className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3 font-semibold text-white cursor-pointer"
                   >
                     Get Started

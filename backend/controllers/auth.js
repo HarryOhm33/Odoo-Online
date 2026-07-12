@@ -84,68 +84,7 @@ module.exports.setup = async (req, res) => {
   });
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Signup (creates an Employee account associated with the organization)
-// POST /api/auth/signup
-// ─────────────────────────────────────────────────────────────────────────────
-module.exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "Name, email, and password are required." });
-  }
-
-  // Check if organization exists first
-  const organization = await Organization.findOne();
-  if (!organization) {
-    return res.status(400).json({ message: "System is not yet initialized. Please contact your administrator to perform Setup." });
-  }
-
-  // Check if user already exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return res.status(400).json({ message: "Email already exists. Please log in." });
-  }
-
-  // Delete old verification tokens if any
-  await EmailToken.deleteOne({ email, type: "verification" });
-
-  const tokenVal = crypto.randomBytes(32).toString("hex");
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Save verification token
-  await EmailToken.create({
-    email,
-    token: tokenVal,
-    type: "verification",
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 mins
-  });
-
-  // Create the employee user
-  await User.create({
-    name,
-    email,
-    password: hashedPassword,
-    role: "Employee",
-    organization: organization._id,
-    isVerified: false,
-    status: "Inactive",
-  });
-
-  // Send verification email
-  const verificationLink = `${process.env.FRONTEND_URL}/auth/verify?token=${tokenVal}&email=${encodeURIComponent(email)}`;
-  const htmlContent = generateVerificationEmail(name, verificationLink);
-
-  await sendEmail(email, "Verify Your Account", {
-    text: "Please verify your email address.",
-    html: htmlContent,
-  });
-
-  return res.status(200).json({
-    success: true,
-    message: "Verification link sent to email (valid for 10 min). Verify to complete signup.",
-  });
-};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STEP 4 — Login (slim JWT payload)
@@ -427,5 +366,36 @@ module.exports.resetPassword = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Password reset successful. Please log in.",
+  });
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Change Password (Authenticated user changes their own password)
+// PUT /api/auth/change-password
+// ─────────────────────────────────────────────────────────────────────────────
+module.exports.changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: "Current and new passwords are required." });
+  }
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) {
+    return res.status(400).json({ message: "Incorrect current password." });
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+  user.password = hashed;
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Password changed successfully.",
   });
 };

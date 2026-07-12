@@ -1,4 +1,3 @@
-// src/pages/admin/organization/Organization.jsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import PageHeader from "../../../components/common/PageHeader";
@@ -23,12 +22,20 @@ const Organization = () => {
   const [name, setName] = useState("");
   const [industry, setIndustry] = useState("");
   const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [website, setWebsite] = useState("");
+  const [timezone, setTimezone] = useState("UTC");
 
   useEffect(() => {
     if (org) {
       setName(org.name || "");
       setIndustry(org.industry || "");
       setAddress(org.address || "");
+      setEmail(org.email || "");
+      setPhone(org.phone || "");
+      setWebsite(org.website || "");
+      setTimezone(org.timezone || "UTC");
     }
   }, [org]);
 
@@ -37,6 +44,10 @@ const Organization = () => {
       setName(org.name || "");
       setIndustry(org.industry || "");
       setAddress(org.address || "");
+      setEmail(org.email || "");
+      setPhone(org.phone || "");
+      setWebsite(org.website || "");
+      setTimezone(org.timezone || "UTC");
     }
     setIsModalOpen(true);
   };
@@ -52,6 +63,10 @@ const Organization = () => {
         name,
         industry,
         address,
+        email,
+        phone,
+        website,
+        timezone,
       });
       toast.success("Organization details updated successfully!");
       setIsModalOpen(false);
@@ -81,7 +96,7 @@ const Organization = () => {
         {/* Org card */}
         <div className="lg:col-span-2 bg-white rounded-lg border border-slate-200 shadow-sm p-6">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
               <FiGlobe className="h-8 w-8 text-white" />
             </div>
             <div>
@@ -92,14 +107,25 @@ const Organization = () => {
             </div>
           </div>
 
-          <div className="divide-y divide-slate-100">
-            <InfoRow label="Industry"   value={org?.industry}  />
-            <InfoRow label="Address"    value={org?.address}   />
-            <InfoRow label="Status"     value={org?.status}    />
-            <InfoRow
-              label="Created"
-              value={org?.createdAt ? new Date(org.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "—"}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+            <div className="divide-y divide-slate-100">
+                <InfoRow label="Industry"   value={org?.industry}  />
+                <InfoRow label="Email"      value={org?.email}     />
+                <InfoRow label="Phone"      value={org?.phone}     />
+            </div>
+            <div className="divide-y divide-slate-100">
+                <InfoRow label="Website"    value={org?.website}   />
+                <InfoRow label="Timezone"   value={org?.timezone}  />
+                <InfoRow
+                  label="Created"
+                  value={org?.createdAt ? new Date(org.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "—"}
+                />
+            </div>
+          </div>
+          
+          <div className="mt-4 pt-4 border-t border-slate-100">
+             <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Address</h4>
+             <p className="text-sm text-slate-700 whitespace-pre-line">{org?.address || "—"}</p>
           </div>
         </div>
 
@@ -107,7 +133,7 @@ const Organization = () => {
         <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
           <h3 className="text-slate-800 font-semibold text-sm mb-4">System Administrator</h3>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white font-semibold text-sm">
                 {user?.name?.[0]?.toUpperCase()}
               </span>
@@ -142,7 +168,7 @@ const Organization = () => {
           </>
         }
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Organization Name *
@@ -157,16 +183,77 @@ const Organization = () => {
             />
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Industry
+                </label>
+                <input
+                  type="text"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g. Technology"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Timezone
+                </label>
+                <select
+                  value={timezone}
+                  onChange={(e) => setTimezone(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="UTC">UTC</option>
+                  <option value="America/New_York">Eastern Time (ET)</option>
+                  <option value="America/Chicago">Central Time (CT)</option>
+                  <option value="America/Denver">Mountain Time (MT)</option>
+                  <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                  <option value="Europe/London">London (GMT/BST)</option>
+                  <option value="Asia/Kolkata">India (IST)</option>
+                  <option value="Australia/Sydney">Sydney (AEST)</option>
+                </select>
+              </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="contact@company.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="+1 (555) 000-0000"
+                />
+              </div>
+          </div>
+          
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Industry
+              Website
             </label>
             <input
-              type="text"
-              value={industry}
-              onChange={(e) => setIndustry(e.target.value)}
+              type="url"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g. Technology"
+              placeholder="https://www.company.com"
             />
           </div>
 

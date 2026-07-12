@@ -1,20 +1,33 @@
-// src/pages/admin/employees/Employees.jsx
 import { useState, useEffect } from "react";
 import PageHeader from "../../../components/common/PageHeader";
 import SearchBar from "../../../components/common/SearchBar";
+import FilterBar from "../../../components/common/FilterBar";
 import EmployeeTable from "../../../components/features/employees/EmployeeTable";
 import Modal from "../../../components/common/Modal";
+import ConfirmationModal from "../../../components/common/ConfirmationModal";
+import Drawer from "../../../components/common/Drawer";
 import api from "../../../services/api";
-import { FiPlus, FiMail, FiUser } from "react-icons/fi";
+import { FiPlus, FiMail, FiUser, FiBriefcase, FiPhone, FiMapPin, FiCalendar, FiBox, FiTool } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 const Employees = () => {
   const [employees, setEmployees]     = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading]         = useState(true);
+  
+  // Filtering & Search
   const [search, setSearch]           = useState("");
+  const [roleFilter, setRoleFilter]   = useState("");
+  const [deptFilter, setDeptFilter]   = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  // Modals & Drawers
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEmp, setEditingEmp]   = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [empToDelete, setEmpToDelete] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedEmp, setSelectedEmp] = useState(null);
 
   // Form State
   const [role, setRole]               = useState("Employee");
@@ -68,6 +81,48 @@ const Employees = () => {
     setIsModalOpen(true);
   };
 
+  const handleRowClick = (emp) => {
+    setSelectedEmp(emp);
+    setIsDrawerOpen(true);
+  };
+
+  const handleResendActivation = async (emp) => {
+    try {
+      await api.post(`/api/employees/${emp._id}/resend-activation`);
+      toast.success("Activation email resent successfully!");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to resend activation.");
+    }
+  };
+
+  const handleToggleStatus = async (emp) => {
+    try {
+      const newStatus = emp.status === "Active" ? "Inactive" : "Active";
+      await api.put(`/api/employees/${emp._id}`, { status: newStatus });
+      toast.success(`Employee ${newStatus === "Active" ? "activated" : "deactivated"}!`);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to change status.");
+    }
+  };
+
+  const handleDeleteClick = (emp) => {
+    setEmpToDelete(emp);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await api.delete(`/api/employees/${empToDelete._id}`);
+      toast.success("Employee deactivated successfully!");
+      setIsDeleteModalOpen(false);
+      setEmpToDelete(null);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to deactivate employee.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -96,6 +151,9 @@ const Employees = () => {
           status,
         });
         toast.success("Employee updated successfully!");
+        if (selectedEmp && selectedEmp._id === editingEmp._id) {
+            setIsDrawerOpen(false);
+        }
       }
       setIsModalOpen(false);
       fetchData();
@@ -104,10 +162,13 @@ const Employees = () => {
     }
   };
 
-  const filteredEmployees = employees.filter((emp) =>
-    emp.name.toLowerCase().includes(search.toLowerCase()) ||
-    emp.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredEmployees = employees.filter((emp) => {
+    const matchesSearch = emp.name.toLowerCase().includes(search.toLowerCase()) || emp.email.toLowerCase().includes(search.toLowerCase());
+    const matchesRole   = roleFilter ? emp.role === roleFilter : true;
+    const matchesDept   = deptFilter ? (emp.department?._id || emp.department) === deptFilter : true;
+    const matchesStatus = statusFilter ? emp.status === statusFilter : true;
+    return matchesSearch && matchesRole && matchesDept && matchesStatus;
+  });
 
   return (
     <div className="space-y-5">
@@ -125,19 +186,53 @@ const Employees = () => {
         }
       />
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
         <SearchBar
           value={search}
           onChange={setSearch}
           placeholder="Search employees by name or email..."
-          className="w-full max-w-sm"
+          className="w-full lg:max-w-sm"
+        />
+        <FilterBar
+          filters={[
+            {
+              label: "All Roles",
+              value: roleFilter,
+              onChange: setRoleFilter,
+              options: [
+                { label: "Admin", value: "Admin" },
+                { label: "Department Head", value: "DepartmentHead" },
+                { label: "Asset Manager", value: "AssetManager" },
+                { label: "Employee", value: "Employee" },
+              ]
+            },
+            {
+              label: "All Departments",
+              value: deptFilter,
+              onChange: setDeptFilter,
+              options: departments.map(d => ({ label: d.name, value: d._id }))
+            },
+            {
+              label: "All Statuses",
+              value: statusFilter,
+              onChange: setStatusFilter,
+              options: [
+                { label: "Active", value: "Active" },
+                { label: "Inactive", value: "Inactive" }
+              ]
+            }
+          ]}
         />
       </div>
 
       <EmployeeTable
         employees={filteredEmployees}
         loading={loading}
-        onRowClick={handleOpenEdit}
+        onRowClick={handleRowClick}
+        onEdit={handleOpenEdit}
+        onResendActivation={handleResendActivation}
+        onToggleStatus={handleToggleStatus}
+        onDelete={handleDeleteClick}
       />
 
       <Modal
@@ -192,6 +287,7 @@ const Employees = () => {
                 onChange={(e) => setCreateEmail(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="john@organization.com"
+                disabled={!isCreateMode} // Usually shouldn't change email after creation easily
               />
             </div>
           </div>
@@ -204,11 +300,11 @@ const Employees = () => {
               value={role}
               onChange={(e) => setRole(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={!isCreateMode && editingEmp?.role === "Admin"} // Prevent changing admin's role
             >
               <option value="Employee">Employee (Operational)</option>
               <option value="DepartmentHead">Department Head</option>
               <option value="AssetManager">Asset Manager</option>
-              <option value="Admin">System Administrator</option>
             </select>
           </div>
 
@@ -239,6 +335,7 @@ const Employees = () => {
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={editingEmp?.role === "Admin"} // Prevent deactivating admin from here
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -247,6 +344,73 @@ const Employees = () => {
           )}
         </form>
       </Modal>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Deactivate Employee"
+        message={`Are you sure you want to deactivate ${empToDelete?.name}? They will lose access to the system.`}
+        confirmText="Deactivate"
+        danger={true}
+      />
+
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Employee Profile"
+      >
+        {selectedEmp && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-2xl">
+                {selectedEmp.name?.[0]?.toUpperCase()}
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-800">{selectedEmp.name}</h3>
+                <p className="text-slate-500">{selectedEmp.role}</p>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${selectedEmp.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {selectedEmp.status}
+                  </span>
+                  {!selectedEmp.isVerified && (
+                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
+                      Pending Activation
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-xl space-y-3">
+              <h4 className="text-sm font-semibold text-slate-700 mb-2">Contact Information</h4>
+              <div className="flex items-center gap-3 text-sm text-slate-600">
+                <FiMail className="text-slate-400" />
+                <a href={`mailto:${selectedEmp.email}`} className="hover:text-blue-600 transition-colors">{selectedEmp.email}</a>
+              </div>
+              {selectedEmp.phone && (
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <FiPhone className="text-slate-400" />
+                  <a href={`tel:${selectedEmp.phone}`} className="hover:text-blue-600 transition-colors">{selectedEmp.phone}</a>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-xl space-y-3">
+              <h4 className="text-sm font-semibold text-slate-700 mb-2">Organization Details</h4>
+              <div className="flex items-center gap-3 text-sm text-slate-600">
+                <FiBriefcase className="text-slate-400" />
+                <span>{selectedEmp.department?.name || "No Department Assigned"}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-slate-600">
+                <FiCalendar className="text-slate-400" />
+                <span>Joined {new Date(selectedEmp.createdAt).toLocaleDateString()}</span>
+              </div>
+            </div>
+
+          </div>
+        )}
+      </Drawer>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 // src/pages/app/allocations/Allocations.jsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
+import usePermissions from "../../../hooks/usePermissions";
 import PageHeader from "../../../components/common/PageHeader";
 import SearchBar from "../../../components/common/SearchBar";
 import Table from "../../../components/common/Table";
@@ -32,6 +33,7 @@ const columns = (onReturn, isAssetManager) => [
 
 const Allocations = () => {
   const { user } = useAuth();
+  const { can } = usePermissions();
   const [allocatedAssets, setAssets]   = useState([]);
   const [loading, setLoading]          = useState(true);
   const [search, setSearch]            = useState("");
@@ -41,7 +43,7 @@ const Allocations = () => {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [conditionAtCheckIn, setCondition] = useState("Good");
 
-  const isAssetManager = ["AssetManager", "Admin"].includes(user?.role);
+  const canAllocate = can("allocation:create");
 
   const fetchAllocations = async () => {
     try {
@@ -101,7 +103,7 @@ const Allocations = () => {
       />
 
       <Table
-        columns={columns(handleOpenReturn, isAssetManager)}
+        columns={columns(handleOpenReturn, canAllocate)}
         rows={filtered}
         loading={loading}
         emptyMessage="No active allocations found."
@@ -138,7 +140,7 @@ const Allocations = () => {
               Check-in Condition
             </label>
             <select
-              value={condition}
+              value={conditionAtCheckIn}
               onChange={(e) => setCondition(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >

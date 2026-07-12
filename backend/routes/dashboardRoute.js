@@ -20,9 +20,25 @@ router.get(
 
     if (role === "Admin") {
       // Fetch Admin Dashboard Stats
-      const [employeesCount, departmentsCount, categoriesCount] = await Promise.all([
+      const [
+        totalEmployees,
+        activeEmployees,
+        totalDepartments,
+        activeAssets,
+        assetsUnderMaintenance,
+        activeBookings,
+        pendingMaintenanceRequests,
+        activeAuditCycles,
+        categoriesCount
+      ] = await Promise.all([
         User.countDocuments({ organization }),
+        User.countDocuments({ organization, status: "Active" }),
         Department.countDocuments({ organization }),
+        Asset.countDocuments({ organization, status: "Available" }),
+        Asset.countDocuments({ organization, status: "In Maintenance" }),
+        Booking.countDocuments({ organization, status: { $in: ["Upcoming", "Ongoing"] } }),
+        MaintenanceRequest.countDocuments({ organization, status: "Pending" }),
+        AuditCycle.countDocuments({ organization, status: { $in: ["Planned", "In Progress"] } }),
         AssetCategory.countDocuments({ organization }),
       ]);
 
@@ -88,8 +104,14 @@ router.get(
       return res.status(200).json({
         success: true,
         stats: {
-          employeesCount,
-          departmentsCount,
+          totalEmployees,
+          activeEmployees,
+          totalDepartments,
+          activeAssets,
+          assetsUnderMaintenance,
+          activeBookings,
+          pendingMaintenanceRequests,
+          activeAuditCycles,
           categoriesCount,
           recentActivity,
         },

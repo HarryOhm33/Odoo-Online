@@ -38,7 +38,7 @@ const sidebarConfig = {
   Employee: [
     { title: "Dashboard",           icon: FiGrid,     route: "/app/dashboard"     },
     { title: "My Assets",           icon: FiBox,      route: "/app/assets"        },
-    { title: "Resource Bookings",   icon: FiCalendar, route: "/app/bookings"      },
+    { title: "Bookings",            icon: FiCalendar, route: "/app/bookings"      },
     { title: "Maintenance Requests",icon: FiTool,     route: "/app/maintenance"   },
     { title: "Notifications",       icon: FiBell,     route: "/app/notifications" },
     { title: "Profile",             icon: FiUser,     route: "/app/profile"       },
@@ -46,26 +46,28 @@ const sidebarConfig = {
 
   // ── Department Head Portal ────────────────────────────────────────────────
   DepartmentHead: [
-    { title: "Dashboard",        icon: FiGrid,        route: "/app/dashboard"     },
-    { title: "My Assets",        icon: FiBox,         route: "/app/assets"        },
-    { title: "Department Assets",icon: FiPackage,     route: "/app/allocations"   },
-    { title: "Bookings",         icon: FiCalendar,    route: "/app/bookings"      },
-    { title: "Transfer Approvals",icon: FiCheckSquare,route: "/app/maintenance"   },
-    { title: "Notifications",    icon: FiBell,        route: "/app/notifications" },
-    { title: "Profile",          icon: FiUser,        route: "/app/profile"       },
+    { title: "Dashboard",          icon: FiGrid,        route: "/app/dashboard"     },
+    { title: "My Assets",          icon: FiBox,         route: "/app/assets"        },
+    { title: "Department Assets",  icon: FiPackage,     route: "/app/allocations"   },
+    { title: "Bookings",           icon: FiCalendar,    route: "/app/bookings"      },
+    { title: "Transfer Requests",  icon: FiRefreshCw,   route: "/app/transfers"     },
+    { title: "Transfer Approvals", icon: FiCheckSquare, route: "/app/transfers/approvals" },
+    { title: "Notifications",      icon: FiBell,        route: "/app/notifications" },
+    { title: "Profile",            icon: FiUser,        route: "/app/profile"       },
   ],
 
   // ── Asset Manager Portal ──────────────────────────────────────────────────
   AssetManager: [
-    { title: "Dashboard",      icon: FiGrid,      route: "/app/dashboard"     },
-    { title: "Assets",         icon: FiBox,       route: "/app/assets"        },
-    { title: "Asset Allocation",icon: FiRefreshCw,route: "/app/allocations"   },
-    { title: "Resource Bookings",icon: FiCalendar,route: "/app/bookings"      },
-    { title: "Maintenance",    icon: FiTool,      route: "/app/maintenance"   },
-    { title: "Audit Cycles",   icon: FiClipboard, route: "/app/audits"        },
-    { title: "Reports",        icon: FiFileText,  route: "/app/reports"       },
-    { title: "Notifications",  icon: FiBell,      route: "/app/notifications" },
-    { title: "Profile",        icon: FiUser,      route: "/app/profile"       },
+    { title: "Dashboard",        icon: FiGrid,      route: "/app/dashboard"     },
+    { title: "Assets",           icon: FiBox,       route: "/app/assets"        },
+    { title: "Asset Allocation", icon: FiRefreshCw, route: "/app/allocations"   },
+    { title: "Transfers",        icon: FiRefreshCw, route: "/app/transfers"     },
+    { title: "Bookings",         icon: FiCalendar,  route: "/app/bookings"      },
+    { title: "Maintenance",      icon: FiTool,      route: "/app/maintenance"   },
+    { title: "Audit Cycles",     icon: FiClipboard, route: "/app/audits"        },
+    { title: "Reports",          icon: FiFileText,  route: "/app/reports"       },
+    { title: "Notifications",    icon: FiBell,      route: "/app/notifications" },
+    { title: "Profile",          icon: FiUser,      route: "/app/profile"       },
   ],
 };
 

@@ -18,7 +18,6 @@ import Home from "./Pages/Home";
 
 // ── Auth Pages ────────────────────────────────────────────────────────────
 import Login          from "./pages/auth/Login";
-import Signup         from "./pages/auth/Signup";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword  from "./pages/auth/ResetPassword";
 import Verify         from "./Pages/Verify";
@@ -44,6 +43,7 @@ import Settings       from "./pages/admin/settings/Settings";
 import EmployeeDashboard from "./pages/app/dashboard/EmployeeDashboard";
 import Assets            from "./pages/app/assets/Assets";
 import Allocations       from "./pages/app/allocations/Allocations";
+import Transfers         from "./pages/app/transfers/Transfers";
 import Bookings          from "./pages/app/bookings/Bookings";
 import Maintenance       from "./pages/app/maintenance/Maintenance";
 import Audits            from "./pages/app/audits/Audits";
@@ -78,7 +78,6 @@ function App() {
             {/* Auth-only pages (redirect away if already logged in) */}
             <Route element={<ProtectedAuth />}>
               <Route path="/auth/login"           element={<Login />} />
-              <Route path="/auth/signup"          element={<Signup />} />
               <Route path="/auth/forgot-password" element={<ForgotPassword />} />
             </Route>
           </Route>
@@ -106,6 +105,8 @@ function App() {
               <Route path="/app/dashboard"     element={<EmployeeDashboard />} />
               <Route path="/app/assets"        element={<Assets />} />
               <Route path="/app/allocations"   element={<Allocations />} />
+              <Route path="/app/transfers"     element={<Transfers />} />
+              <Route path="/app/transfers/approvals" element={<Transfers />} />
               <Route path="/app/bookings"      element={<Bookings />} />
               <Route path="/app/maintenance"   element={<Maintenance />} />
               <Route path="/app/audits"        element={<Audits />} />

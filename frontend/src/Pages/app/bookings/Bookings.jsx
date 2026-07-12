@@ -8,10 +8,12 @@ import Modal from "../../../components/common/Modal";
 import api from "../../../services/api";
 import { FiPlus, FiCalendar, FiClock, FiAlertTriangle } from "react-icons/fi";
 import { toast } from "react-toastify";
+import usePermissions from "../../../hooks/usePermissions";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const statusColor = { Upcoming: "blue", Ongoing: "green", Completed: "slate", Cancelled: "red" };
 
-const columns = (onCancel) => [
+const columns = (onCancel, canCancel) => [
   { key: "asset",   label: "Resource",   render: (v) => v ? `${v.name} (${v.assetTag})` : "—" },
   { key: "user",    label: "Booked By",  render: (v) => v?.name || "—" },
   { key: "startDate",  label: "Start Time",  render: (v) => v ? new Date(v).toLocaleString() : "—" },
@@ -21,7 +23,7 @@ const columns = (onCancel) => [
   {
     key: "actions",
     label: "Actions",
-    render: (_, row) => row.status === "Upcoming" ? (
+    render: (_, row) => (row.status === "Upcoming" && canCancel) ? (
       <button
         onClick={(e) => { e.stopPropagation(); onCancel(row._id); }}
         className="text-red-500 hover:text-red-700 font-medium text-xs cursor-pointer"
@@ -33,6 +35,8 @@ const columns = (onCancel) => [
 ];
 
 const Bookings = () => {
+  const { user } = useAuth();
+  const { can } = usePermissions();
   const [bookings, setBookings]       = useState([]);
   const [bookableAssets, setAssets]   = useState([]);
   const [loading, setLoading]         = useState(true);
@@ -45,6 +49,9 @@ const Bookings = () => {
   const [endDate, setEndDate]         = useState("");
   const [purpose, setPurpose]         = useState("");
 
+  const canCreate = can("booking:create");
+  const canCancel = can("booking:cancel");
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -52,7 +59,20 @@ const Bookings = () => {
         api.get("/api/bookings"),
         api.get("/api/assets"),
       ]);
-      setBookings(bookRes.data.bookings || []);
+      
+      let allBookings = bookRes.data.bookings || [];
+      
+      // Filter based on permissions
+      if (!can("booking:view_all")) {
+        if (can("booking:department")) {
+          // Assume backend populate user department, fallback to filtering by own
+          allBookings = allBookings.filter(b => b.user?.department === user.department || b.user?._id === user._id);
+        } else {
+          allBookings = allBookings.filter(b => b.user?._id === user._id);
+        }
+      }
+      
+      setBookings(allBookings);
       // Filter assets that are marked bookable
       const bookables = (assetRes.data.assets || []).filter((a) => a.sharedBookable);
       setAssets(bookables);
@@ -130,13 +150,15 @@ const Bookings = () => {
         title="Resource Bookings"
         subtitle="Reserve shared spaces, vehicles, or equipment with overlap safety checks"
         actions={
-          <button
-            onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-          >
-            <FiPlus className="h-4 w-4" />
-            Book Resource
-          </button>
+          canCreate && (
+            <button
+              onClick={handleOpenCreate}
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+            >
+              <FiPlus className="h-4 w-4" />
+              Book Resource
+            </button>
+          )
         }
       />
 
@@ -148,7 +170,7 @@ const Bookings = () => {
       />
 
       <Table
-        columns={columns(handleCancelBooking)}
+        columns={columns(handleCancelBooking, canCancel)}
         rows={filteredBookings}
         loading={loading}
         emptyMessage="No bookings found. Create a booking."

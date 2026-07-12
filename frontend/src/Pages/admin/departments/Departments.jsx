@@ -1,11 +1,12 @@
-// src/pages/admin/departments/Departments.jsx
 import { useState, useEffect } from "react";
 import PageHeader from "../../../components/common/PageHeader";
 import SearchBar from "../../../components/common/SearchBar";
+import FilterBar from "../../../components/common/FilterBar";
 import DepartmentTable from "../../../components/features/departments/DepartmentTable";
 import Modal from "../../../components/common/Modal";
+import ConfirmationModal from "../../../components/common/ConfirmationModal";
 import api from "../../../services/api";
-import { FiPlus, FiEdit2 } from "react-icons/fi";
+import { FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 const Departments = () => {
@@ -13,8 +14,13 @@ const Departments = () => {
   const [employees, setEmployees]     = useState([]);
   const [loading, setLoading]         = useState(true);
   const [search, setSearch]           = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDept, setEditingDept] = useState(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deptToDelete, setDeptToDelete] = useState(null);
 
   // Form State
   const [name, setName]                         = useState("");
@@ -63,6 +69,34 @@ const Departments = () => {
     setIsModalOpen(true);
   };
 
+  const handleToggleStatus = async (dept) => {
+    try {
+      const newStatus = dept.status === "Active" ? "Inactive" : "Active";
+      await api.put(`/api/departments/${dept._id}`, { status: newStatus });
+      toast.success(`Department ${newStatus === "Active" ? "activated" : "deactivated"}!`);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to change status.");
+    }
+  };
+
+  const handleDeleteClick = (dept) => {
+    setDeptToDelete(dept);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await api.delete(`/api/departments/${deptToDelete._id}`);
+      toast.success("Department deleted successfully!");
+      setIsDeleteModalOpen(false);
+      setDeptToDelete(null);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete department.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -88,10 +122,11 @@ const Departments = () => {
     }
   };
 
-  const filteredDepts = departments.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase()) ||
-    (d.code && d.code.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredDepts = departments.filter((d) => {
+    const matchesSearch = d.name.toLowerCase().includes(search.toLowerCase()) || (d.code && d.code.toLowerCase().includes(search.toLowerCase()));
+    const matchesStatus = statusFilter ? d.status === statusFilter : true;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="space-y-5">
@@ -109,19 +144,38 @@ const Departments = () => {
         }
       />
 
-      <SearchBar
-        value={search}
-        onChange={setSearch}
-        placeholder="Search departments..."
-        className="w-full max-w-sm"
-      />
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Search departments..."
+          className="w-full sm:max-w-sm"
+        />
+        <FilterBar
+          filters={[
+            {
+              label: "All Statuses",
+              value: statusFilter,
+              onChange: setStatusFilter,
+              options: [
+                { label: "Active", value: "Active" },
+                { label: "Inactive", value: "Inactive" }
+              ]
+            }
+          ]}
+        />
+      </div>
 
       <DepartmentTable
         departments={filteredDepts}
         loading={loading}
         onRowClick={handleOpenEdit}
+        onEdit={handleOpenEdit}
+        onToggleStatus={handleToggleStatus}
+        onDelete={handleDeleteClick}
       />
 
+      {/* Create / Edit Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -225,6 +279,17 @@ const Departments = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Department"
+        message={`Are you sure you want to delete ${deptToDelete?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        danger={true}
+      />
     </div>
   );
 };

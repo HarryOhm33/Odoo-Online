@@ -1,4 +1,3 @@
-// src/pages/app/audits/Audits.jsx
 import { useState, useEffect } from "react";
 import PageHeader from "../../../components/common/PageHeader";
 import SearchBar from "../../../components/common/SearchBar";
@@ -9,8 +8,9 @@ import Badge from "../../../components/common/Badge";
 import api from "../../../services/api";
 import { FiPlus, FiCheckSquare, FiXOctagon, FiAlertCircle, FiClipboard } from "react-icons/fi";
 import { toast } from "react-toastify";
+import usePermissions from "../../../hooks/usePermissions";
 
-const auditedAssetColumns = (onVerify, isClosed) => [
+const auditedAssetColumns = (onVerify, isClosed, canManage) => [
   { key: "asset", label: "Asset Tag", render: (v) => v?.assetTag || "—" },
   { key: "assetName", label: "Asset Name", render: (_, row) => row.asset?.name || "—" },
   {
@@ -22,7 +22,7 @@ const auditedAssetColumns = (onVerify, isClosed) => [
   {
     key: "actions",
     label: "Verify Action",
-    render: (_, row) => !isClosed ? (
+    render: (_, row) => (!isClosed && canManage) ? (
       <div className="flex gap-1.5">
         <button
           onClick={() => onVerify(row.asset?._id, "Verified")}
@@ -43,11 +43,12 @@ const auditedAssetColumns = (onVerify, isClosed) => [
           Damaged
         </button>
       </div>
-    ) : "Audit Locked",
+    ) : (isClosed ? "Audit Locked" : "—"),
   },
 ];
 
 const Audits = () => {
+  const { can } = usePermissions();
   const [audits, setAudits]           = useState([]);
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees]     = useState([]);
@@ -66,6 +67,9 @@ const Audits = () => {
   // Audit Checklist Modal
   const [isChecklistOpen, setIsChecklistOpen]     = useState(false);
   const [selectedAudit, setSelectedAudit]         = useState(null);
+
+  const canCreate = can("audit:create");
+  const canManage = can("audit:manage");
 
   const fetchData = async () => {
     try {
@@ -167,13 +171,15 @@ const Audits = () => {
         title="Audit Cycles"
         subtitle="Schedule and execute periodic verification cycles to detect inventory discrepancies"
         actions={
-          <button
-            onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-          >
-            <FiPlus className="h-4 w-4" />
-            New Audit
-          </button>
+          canCreate && (
+            <button
+              onClick={handleOpenCreate}
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+            >
+              <FiPlus className="h-4 w-4" />
+              New Audit
+            </button>
+          )
         }
       />
 
@@ -314,7 +320,7 @@ const Audits = () => {
               >
                 Close View
               </button>
-              {selectedAudit?.status !== "Completed" && (
+              {selectedAudit?.status !== "Completed" && canManage && (
                 <button
                   onClick={handleCloseAudit}
                   className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer"
@@ -334,7 +340,7 @@ const Audits = () => {
           </div>
 
           <Table
-            columns={auditedAssetColumns(handleVerifyAsset, selectedAudit?.status === "Completed")}
+            columns={auditedAssetColumns(handleVerifyAsset, selectedAudit?.status === "Completed", canManage)}
             rows={selectedAudit?.auditedAssets || []}
             emptyMessage="No scoped assets detected under this audit department/location."
           />

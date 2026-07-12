@@ -11,6 +11,7 @@ const {
   getEmployee,
   updateEmployee,
   resendActivation,
+  deleteEmployee,
 } = require("../controllers/employee");
 
 // POST   /api/employees          — Admin creates a new employee
@@ -21,19 +22,19 @@ router.post(
   wrapAsync(createEmployee)
 );
 
-// GET    /api/employees          — Admin / DepartmentHead lists all employees
+// GET    /api/employees          — Admin / DepartmentHead / AssetManager lists all employees
 router.get(
   "/",
   authenticate,
-  authorize("Admin", "DepartmentHead"),
+  authorize("Admin", "DepartmentHead", "AssetManager"),
   wrapAsync(getEmployees)
 );
 
-// GET    /api/employees/:id      — Admin / DepartmentHead gets a single employee
+// GET    /api/employees/:id      — Admin / DepartmentHead / AssetManager gets a single employee
 router.get(
   "/:id",
   authenticate,
-  authorize("Admin", "DepartmentHead"),
+  authorize("Admin", "DepartmentHead", "AssetManager"),
   wrapAsync(getEmployee)
 );
 
@@ -51,6 +52,14 @@ router.post(
   authenticate,
   authorize("Admin"),
   wrapAsync(resendActivation)
+);
+
+// DELETE /api/employees/:id — Admin deactivates (soft-deletes) an employee
+router.delete(
+  "/:id",
+  authenticate,
+  authorize("Admin"),
+  wrapAsync(deleteEmployee)
 );
 
 module.exports = router;

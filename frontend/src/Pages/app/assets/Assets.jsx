@@ -1,6 +1,7 @@
 // src/pages/app/assets/Assets.jsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
+import usePermissions from "../../../hooks/usePermissions";
 import PageHeader from "../../../components/common/PageHeader";
 import SearchBar from "../../../components/common/SearchBar";
 import AssetTable from "../../../components/features/assets/AssetTable";
@@ -12,6 +13,7 @@ import { toast } from "react-toastify";
 
 const Assets = () => {
   const { user } = useAuth();
+  const { can } = usePermissions();
   const [assets, setAssets]         = useState([]);
   const [categories, setCategories] = useState([]);
   const [employees, setEmployees]   = useState([]);
@@ -52,23 +54,58 @@ const Assets = () => {
   // Form State - Return Asset
   const [conditionAtCheckIn, setConditionAtCheckIn] = useState("Good");
 
-  const isAssetManager = ["AssetManager", "Admin"].includes(user?.role);
+  const canRegister = can("asset:register");
+  const canAllocate = can("allocation:create");
 
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const [assetRes, catRes, empRes, deptRes] = await Promise.all([
+      
+      const reqs = [
         api.get("/api/assets"),
         api.get("/api/categories"),
-        api.get("/api/employees"),
-        api.get("/api/departments"),
-      ]);
-      setAssets(assetRes.data.assets || []);
-      setCategories(catRes.data.categories || []);
-      setEmployees(empRes.data.employees || []);
-      setDepartments(deptRes.data.departments || []);
+      ];
+      
+      if (canAllocate) {
+        reqs.push(api.get("/api/employees"));
+        reqs.push(api.get("/api/departments"));
+      }
+
+      const results = await Promise.allSettled(reqs);
+      
+      let allAssets = [];
+      if (results[0].status === "fulfilled") {
+        allAssets = results[0].value.data.assets || [];
+      } else {
+        toast.error("Failed to load assets.");
+      }
+      
+      // Filter assets based on permissions
+      if (!can("asset:view_all")) {
+        if (can("asset:view_dept")) {
+          allAssets = allAssets.filter(a => a.department === user.department || a.assignedTo?._id === user._id);
+        } else if (can("asset:view_own")) {
+          allAssets = allAssets.filter(a => a.assignedTo?._id === user._id);
+        }
+      }
+
+      setAssets(allAssets);
+
+      if (results[1]?.status === "fulfilled") {
+        setCategories(results[1].value.data.categories || []);
+      }
+
+      if (canAllocate) {
+        if (results[2]?.status === "fulfilled") {
+          setEmployees(results[2].value.data.employees || []);
+        }
+        if (results[3]?.status === "fulfilled") {
+          setDepartments(results[3].value.data.departments || []);
+        }
+      }
+      
     } catch (err) {
-      toast.error("Failed to load assets list.");
+      toast.error("An error occurred while loading data.");
     } finally {
       setLoading(false);
     }
@@ -198,10 +235,10 @@ const Assets = () => {
   return (
     <div className="space-y-5">
       <PageHeader
-        title={user?.role === "Employee" ? "My Assets" : "Assets"}
-        subtitle="Manage and track your organization's physical assets"
+        title={can("asset:view_all") ? "Asset Directory" : can("asset:view_dept") ? "Department Assets" : "My Assets"}
+        subtitle="Manage and track physical assets"
         actions={
-          isAssetManager && (
+          canRegister && (
             <button
               onClick={handleOpenRegister}
               className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
@@ -241,7 +278,7 @@ const Assets = () => {
           assets={filteredAssets}
           loading={loading}
           onRowClick={(asset) => {
-            if (isAssetManager) {
+            if (canAllocate) {
               if (asset.status === "Available") {
                 handleOpenAllocate(asset);
               } else if (asset.status === "Allocated") {
@@ -257,7 +294,7 @@ const Assets = () => {
               key={asset._id}
               asset={asset}
               onClick={(a) => {
-                if (isAssetManager) {
+                if (canAllocate) {
                   if (a.status === "Available") {
                     handleOpenAllocate(a);
                   } else if (a.status === "Allocated") {

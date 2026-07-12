@@ -207,3 +207,38 @@ module.exports.resendActivation = async (req, res) => {
     message: `Activation email resent to ${employee.email}.`,
   });
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Deactivate / Delete an employee (soft delete → status: "Inactive")
+// DELETE /api/employees/:id
+// Access: Admin only
+// ─────────────────────────────────────────────────────────────────────────────
+module.exports.deleteEmployee = async (req, res) => {
+  const employee = await User.findOne({
+    _id: req.params.id,
+    organization: req.user.organization,
+  });
+
+  if (!employee) {
+    return res.status(404).json({ message: "Employee not found." });
+  }
+
+  // Prevent deleting yourself
+  if (employee._id.toString() === req.user.id) {
+    return res.status(400).json({ message: "You cannot deactivate your own account." });
+  }
+
+  // Prevent deleting another Admin
+  if (employee.role === "Admin") {
+    return res.status(400).json({ message: "Admin accounts cannot be deactivated this way." });
+  }
+
+  employee.status = "Inactive";
+  await employee.save();
+
+  return res.status(200).json({
+    success: true,
+    message: `Employee "${employee.name}" has been deactivated.`,
+  });
+};
+

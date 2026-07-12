@@ -1,15 +1,16 @@
-// src/pages/admin/categories/Categories.jsx
 import { useState, useEffect } from "react";
 import PageHeader from "../../../components/common/PageHeader";
 import SearchBar from "../../../components/common/SearchBar";
 import Table from "../../../components/common/Table";
 import Modal from "../../../components/common/Modal";
+import ConfirmationModal from "../../../components/common/ConfirmationModal";
+import ActionMenu from "../../../components/common/ActionMenu";
 import Badge from "../../../components/common/Badge";
 import api from "../../../services/api";
-import { FiPlus, FiTrash2, FiTag } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { toast } from "react-toastify";
 
-const columns = (onEdit) => [
+const columns = (onEdit, onDelete) => [
   { key: "name",        label: "Category Name" },
   { key: "description", label: "Description",   render: (v) => v || "—" },
   {
@@ -30,14 +31,30 @@ const columns = (onEdit) => [
     label: "Status",
     render: (v) => <Badge label={v || "Active"} color={v === "Active" ? "green" : "slate"} />,
   },
+  {
+    key: "actions",
+    label: "",
+    render: (_, row) => (
+      <ActionMenu
+        actions={[
+          { label: "Edit", icon: <FiEdit2 />, onClick: () => onEdit(row) },
+          { label: "Delete", icon: <FiTrash2 />, danger: true, onClick: () => onDelete(row) },
+        ]}
+      />
+    ),
+  },
 ];
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [search, setSearch]         = useState("");
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCat, setEditingCat]   = useState(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [catToDelete, setCatToDelete] = useState(null);
 
   // Form State
   const [name, setName]               = useState("");
@@ -81,6 +98,23 @@ const Categories = () => {
     setCustomFields(cat.customFields || []);
     setStatus(cat.status || "Active");
     setIsModalOpen(true);
+  };
+
+  const handleDeleteClick = (cat) => {
+    setCatToDelete(cat);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await api.delete(`/api/categories/${catToDelete._id}`);
+      toast.success("Category deleted successfully!");
+      setIsDeleteModalOpen(false);
+      setCatToDelete(null);
+      fetchCategories();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete category.");
+    }
   };
 
   const handleAddCustomField = () => {
@@ -146,7 +180,7 @@ const Categories = () => {
       />
 
       <Table
-        columns={columns(handleOpenEdit)}
+        columns={columns(handleOpenEdit, handleDeleteClick)}
         rows={filteredCats}
         loading={loading}
         onRowClick={handleOpenEdit}
@@ -222,7 +256,7 @@ const Categories = () => {
                     <button
                       type="button"
                       onClick={() => handleRemoveCustomField(idx)}
-                      className="text-red-500 hover:text-red-700 p-1"
+                      className="text-red-500 hover:text-red-700 p-1 cursor-pointer"
                     >
                       <FiTrash2 className="h-4 w-4" />
                     </button>
@@ -275,6 +309,16 @@ const Categories = () => {
           </div>
         </form>
       </Modal>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Category"
+        message={`Are you sure you want to delete ${catToDelete?.name}? This action cannot be undone and will fail if assets are assigned to it.`}
+        confirmText="Delete"
+        danger={true}
+      />
     </div>
   );
 };

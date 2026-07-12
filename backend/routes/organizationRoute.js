@@ -30,7 +30,7 @@ router.put(
     if (!req.user.organization) {
       return res.status(400).json({ message: "User does not belong to any organization." });
     }
-    const { name, industry, address, status, logo } = req.body;
+    const { name, industry, address, status, logo, email, phone, website, timezone } = req.body;
     
     if (name !== undefined && !name.trim()) {
       return res.status(400).json({ message: "Organization name cannot be empty." });
@@ -41,9 +41,13 @@ router.put(
       return res.status(404).json({ message: "Organization not found." });
     }
 
-    if (name) organization.name = name.trim();
-    if (industry !== undefined) organization.industry = industry ? industry.trim() : null;
-    if (address !== undefined) organization.address = address ? address.trim() : null;
+    if (name)      organization.name     = name.trim();
+    if (industry   !== undefined) organization.industry  = industry  ? industry.trim()  : null;
+    if (address    !== undefined) organization.address   = address   ? address.trim()   : null;
+    if (email      !== undefined) organization.email     = email     ? email.trim().toLowerCase() : null;
+    if (phone      !== undefined) organization.phone     = phone     ? phone.trim()     : null;
+    if (website    !== undefined) organization.website   = website   ? website.trim()   : null;
+    if (timezone   !== undefined) organization.timezone  = timezone  || "UTC";
     if (status) organization.status = status;
     if (logo !== undefined) organization.logo = logo;
 

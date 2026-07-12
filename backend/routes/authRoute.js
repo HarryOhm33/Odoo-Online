@@ -6,7 +6,6 @@ const authenticate = require("../middleware/authenticate");
 
 const {
   setup,
-  signup,
   login,
   logout,
   verify,
@@ -15,13 +14,11 @@ const {
   forgotPassword,
   forgotPasswordMobile,
   resetPassword,
+  changePassword,
 } = require("../controllers/auth");
 
 // ── Organization + Admin Setup (one-time, no auth required) ─────────────────
 router.post("/setup", wrapAsync(setup));
-
-// ── Employee Signup (no role selection) ──────────────────────────────────────
-router.post("/signup", wrapAsync(signup));
 
 // ── Email Verification (legacy / kept for compatibility) ─────────────────────
 router.post("/verify", wrapAsync(verify));
@@ -33,10 +30,11 @@ router.post("/activate", wrapAsync(activateAccount));
 router.post("/login", wrapAsync(login));
 router.post("/logout", authenticate, wrapAsync(logout));
 
-// ── Forgot / Reset Password ──────────────────────────────────────────────────
+// ── Forgot / Reset / Change Password ─────────────────────────────────────────
 router.post("/forgot-password", wrapAsync(forgotPassword));
 router.post("/forgot-password-mobile", wrapAsync(forgotPasswordMobile));
 router.post("/reset-password", wrapAsync(resetPassword));
+router.put("/change-password", authenticate, wrapAsync(changePassword));
 
 // ── Session Verification ─────────────────────────────────────────────────────
 router.post("/verify-session", authenticate, wrapAsync(verifySession));

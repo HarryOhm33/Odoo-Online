@@ -1,6 +1,6 @@
-// src/pages/app/maintenance/Maintenance.jsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
+import usePermissions from "../../../hooks/usePermissions";
 import PageHeader from "../../../components/common/PageHeader";
 import SearchBar from "../../../components/common/SearchBar";
 import MaintenanceTable from "../../../components/features/maintenance/MaintenanceTable";
@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 
 const Maintenance = () => {
   const { user } = useAuth();
+  const { can } = usePermissions();
   const [requests, setRequests]       = useState([]);
   const [assets, setAssets]           = useState([]);
   const [loading, setLoading]         = useState(true);
@@ -30,7 +31,8 @@ const Maintenance = () => {
   const [technicianName, setTechnicianName]       = useState("");
   const [notes, setNotes]                         = useState("");
 
-  const isAssetManager = ["AssetManager", "Admin"].includes(user?.role);
+  const canRaise = can("maintenance:raise");
+  const canApprove = can("maintenance:approve");
 
   const fetchData = async () => {
     try {
@@ -39,7 +41,19 @@ const Maintenance = () => {
         api.get("/api/maintenance"),
         api.get("/api/assets"),
       ]);
-      setRequests(reqRes.data.requests || []);
+      
+      let allRequests = reqRes.data.requests || [];
+      
+      if (!can("maintenance:view_all")) {
+        if (can("maintenance:view_dept")) {
+          // Fallback logic for department filtering
+          allRequests = allRequests.filter(r => r.reportedBy?.department === user.department || r.reportedBy?._id === user._id);
+        } else {
+          allRequests = allRequests.filter(r => r.reportedBy?._id === user._id);
+        }
+      }
+
+      setRequests(allRequests);
       setAssets(assetRes.data.assets || []);
     } catch (err) {
       toast.error("Failed to load maintenance requests.");
@@ -112,13 +126,15 @@ const Maintenance = () => {
         title="Maintenance Requests"
         subtitle="Report and resolve hardware asset technical issues"
         actions={
-          <button
-            onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-          >
-            <FiPlus className="h-4 w-4" />
-            New Request
-          </button>
+          canRaise && (
+            <button
+              onClick={handleOpenCreate}
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+            >
+              <FiPlus className="h-4 w-4" />
+              New Request
+            </button>
+          )
         }
       />
 
@@ -133,7 +149,7 @@ const Maintenance = () => {
         records={filteredReqs}
         loading={loading}
         onRowClick={(req) => {
-          if (isAssetManager && ["Pending", "Approved", "Technician Assigned", "In Progress"].includes(req.status)) {
+          if (canApprove && ["Pending", "Approved", "Technician Assigned", "In Progress"].includes(req.status)) {
             handleOpenAction(req);
           }
         }}

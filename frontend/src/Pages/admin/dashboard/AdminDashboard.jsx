@@ -63,16 +63,23 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Total Employees"
-          value={loading ? "..." : (stats?.employeesCount ?? 0)}
+          value={loading ? "..." : (stats?.totalEmployees ?? 0)}
           icon={FiUsers}
           color="blue"
           subtitle="Across all departments"
         />
         <StatCard
-          title="Departments"
-          value={loading ? "..." : (stats?.departmentsCount ?? 0)}
+          title="Active Employees"
+          value={loading ? "..." : (stats?.activeEmployees ?? 0)}
+          icon={FiUsers}
+          color="emerald"
+          subtitle="Verified & active"
+        />
+        <StatCard
+          title="Total Departments"
+          value={loading ? "..." : (stats?.totalDepartments ?? 0)}
           icon={FiLayers}
-          color="green"
+          color="indigo"
           subtitle="Active departments"
         />
         <StatCard
@@ -83,11 +90,32 @@ const AdminDashboard = () => {
           subtitle="Defined categories"
         />
         <StatCard
-          title="System Status"
-          value="Active"
+          title="Active Assets"
+          value={loading ? "..." : (stats?.activeAssets ?? 0)}
           icon={FiCheckCircle}
           color="green"
-          subtitle="All systems operational"
+          subtitle="Available for use"
+        />
+        <StatCard
+          title="Under Maintenance"
+          value={loading ? "..." : (stats?.assetsUnderMaintenance ?? 0)}
+          icon={FiActivity}
+          color="orange"
+          subtitle="Currently in repair"
+        />
+        <StatCard
+          title="Active Bookings"
+          value={loading ? "..." : (stats?.activeBookings ?? 0)}
+          icon={FiActivity}
+          color="violet"
+          subtitle="Ongoing / Upcoming"
+        />
+        <StatCard
+          title="Pending Requests"
+          value={loading ? "..." : (stats?.pendingMaintenanceRequests ?? 0)}
+          icon={FiActivity}
+          color="red"
+          subtitle="Maintenance requests"
         />
       </div>
 

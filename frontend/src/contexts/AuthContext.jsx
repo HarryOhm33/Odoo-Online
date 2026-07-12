@@ -49,23 +49,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [navigate]);
 
-  // ── Employee Signup ────────────────────────────────────────────────────────
-  const signup = async (name, email, password) => {
-    try {
-      setLoading(true);
-      const res = await api.post("/api/auth/signup", { name, email, password });
-      if (res.data.success) {
-        toast.success(res.data.message || "Signup successful! Please check your email to verify.");
-        navigate("/auth/login");
-      }
-      return res.data;
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed ❌");
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   // ── Login ─────────────────────────────────────────────────────────────────
   const login = async (email, password) => {
@@ -186,7 +170,6 @@ export const AuthProvider = ({ children }) => {
         loading,
         isAuthenticated,
         // Actions
-        signup,
         login,
         logout,
         verify,
