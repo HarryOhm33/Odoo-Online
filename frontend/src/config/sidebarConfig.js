@@ -48,6 +48,7 @@ const sidebarConfig = {
   // ── Department Head Portal ────────────────────────────────────────────────
   DepartmentHead: [
     { title: "Dashboard",          icon: FiGrid,        route: "/app/dashboard"     },
+    { title: "Employees",          icon: FiUsers,       route: "/app/employees"     },
     { title: "Assets",             icon: FiBox,         route: "/app/assets"        },
     { title: "Bookings",           icon: FiCalendar,    route: "/app/bookings"      },
     { title: "Transfer Requests",  icon: FiRefreshCw,   route: "/app/transfers"     },

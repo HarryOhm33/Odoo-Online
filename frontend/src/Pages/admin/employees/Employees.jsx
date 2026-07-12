@@ -304,9 +304,9 @@ const Employees = () => {
               className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               disabled={!isCreateMode && editingEmp?.role === "Admin"} // Prevent changing admin's role
             >
-              <option value="Employee">Employee (Operational)</option>
-              <option value="DepartmentHead">Department Head</option>
-              <option value="AssetManager">Asset Manager</option>
+              <option className="bg-[#0B172A] text-white" value="Employee">Employee (Operational)</option>
+              <option className="bg-[#0B172A] text-white" value="DepartmentHead">Department Head</option>
+              <option className="bg-[#0B172A] text-white" value="AssetManager">Asset Manager</option>
             </select>
           </div>
 
@@ -319,9 +319,9 @@ const Employees = () => {
               onChange={(e) => setDepartment(e.target.value)}
               className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
-              <option value="">No department assigned</option>
+              <option className="bg-[#0B172A] text-white" value="">No department assigned</option>
               {departments.map((dept) => (
-                <option key={dept._id} value={dept._id}>
+                <option className="bg-[#0B172A] text-white" key={dept._id} value={dept._id}>
                   {dept.name} {dept.code ? `(${dept.code})` : ""}
                 </option>
               ))}
@@ -339,8 +339,8 @@ const Employees = () => {
                 className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                 disabled={editingEmp?.role === "Admin"} // Prevent deactivating admin from here
               >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option className="bg-[#0B172A] text-white" value="Active">Active</option>
+                <option className="bg-[#0B172A] text-white" value="Inactive">Inactive</option>
               </select>
             </div>
           )}

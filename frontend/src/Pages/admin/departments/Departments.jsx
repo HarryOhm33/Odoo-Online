@@ -184,7 +184,7 @@ const Departments = () => {
           <>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -235,9 +235,9 @@ const Departments = () => {
               onChange={(e) => setHead(e.target.value)}
               className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
-              <option value="">No head assigned</option>
+              <option className="bg-[#0B172A] text-white" value="">No head assigned</option>
               {employees.map((emp) => (
-                <option key={emp._id} value={emp._id}>
+                <option className="bg-[#0B172A] text-white" key={emp._id} value={emp._id}>
                   {emp.name} ({emp.role})
                 </option>
               ))}
@@ -253,11 +253,11 @@ const Departments = () => {
               onChange={(e) => setParentDepartment(e.target.value)}
               className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
-              <option value="">None</option>
+              <option className="bg-[#0B172A] text-white" value="">None</option>
               {departments
                 .filter((d) => !editingDept || d._id !== editingDept._id)
                 .map((d) => (
-                  <option key={d._id} value={d._id}>
+                  <option className="bg-[#0B172A] text-white" key={d._id} value={d._id}>
                     {d.name} {d.code ? `(${d.code})` : ""}
                   </option>
                 ))}
@@ -273,8 +273,8 @@ const Departments = () => {
               onChange={(e) => setStatus(e.target.value)}
               className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive (Deactivated)</option>
+              <option className="bg-[#0B172A] text-white" value="Active">Active</option>
+              <option className="bg-[#0B172A] text-white" value="Inactive">Inactive (Deactivated)</option>
             </select>
           </div>
         </form>

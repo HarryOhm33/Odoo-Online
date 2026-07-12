@@ -339,7 +339,7 @@ const Assets = () => {
           <>
             <button
               onClick={() => setIsCreateModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -368,9 +368,9 @@ const Assets = () => {
                 value={categoryId} required onChange={(e) => handleCategoryChange(e.target.value)}
                 className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
-                <option value="">Select Category</option>
+                <option className="bg-[#0B172A] text-white" value="">Select Category</option>
                 {categories.map((c) => (
-                  <option key={c._id} value={c._id}>{c.name}</option>
+                  <option className="bg-[#0B172A] text-white" key={c._id} value={c._id}>{c.name}</option>
                 ))}
               </select>
             </div>
@@ -402,10 +402,10 @@ const Assets = () => {
                 value={condition} onChange={(e) => setCondition(e.target.value)}
                 className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
-                <option value="New">New</option>
-                <option value="Good">Good</option>
-                <option value="Fair">Fair</option>
-                <option value="Poor">Poor</option>
+                <option className="bg-[#0B172A] text-white" value="New">New</option>
+                <option className="bg-[#0B172A] text-white" value="Good">Good</option>
+                <option className="bg-[#0B172A] text-white" value="Fair">Fair</option>
+                <option className="bg-[#0B172A] text-white" value="Poor">Poor</option>
               </select>
             </div>
             <div>
@@ -429,8 +429,8 @@ const Assets = () => {
 
           {/* Dynamic category-specific custom attributes */}
           {selectedCategory?.customFields && selectedCategory.customFields.length > 0 && (
-            <div className="border border-slate-100 rounded-lg p-3 bg-slate-50">
-              <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-3">
+            <div className="border border-white/10 rounded-lg p-3 bg-white/5">
+              <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-3">
                 {selectedCategory.name} Custom Attributes
               </h4>
               <div className="grid grid-cols-2 gap-3">
@@ -446,7 +446,7 @@ const Assets = () => {
                           [field.name]: e.target.value,
                         }))
                       }
-                      className="w-full px-2 py-1.5 border border-slate-200 rounded-lg text-xs text-white bg-white"
+                      className="w-full px-2 py-1.5 border border-white/10 bg-black/20 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                     />
                   </div>
                 ))}
@@ -465,7 +465,7 @@ const Assets = () => {
           <>
             <button
               onClick={() => setIsAllocateModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -501,9 +501,9 @@ const Assets = () => {
                 value={allocateUser} required onChange={(e) => setAllocateUser(e.target.value)}
                 className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
-                <option value="">Choose employee...</option>
+                <option className="bg-[#0B172A] text-white" value="">Choose employee...</option>
                 {employees.map((emp) => (
-                  <option key={emp._id} value={emp._id}>{emp.name} ({emp.email})</option>
+                  <option className="bg-[#0B172A] text-white" key={emp._id} value={emp._id}>{emp.name} ({emp.email})</option>
                 ))}
               </select>
             </div>
@@ -514,9 +514,9 @@ const Assets = () => {
                 value={allocateDept} required onChange={(e) => setAllocateDept(e.target.value)}
                 className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
-                <option value="">Choose department...</option>
+                <option className="bg-[#0B172A] text-white" value="">Choose department...</option>
                 {departments.map((dept) => (
-                  <option key={dept._id} value={dept._id}>
+                  <option className="bg-[#0B172A] text-white" key={dept._id} value={dept._id}>
                     {dept.name} {dept.code ? `(${dept.code})` : ""}
                   </option>
                 ))}
@@ -543,7 +543,7 @@ const Assets = () => {
           <>
             <button
               onClick={() => setIsReturnModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -558,7 +558,7 @@ const Assets = () => {
       >
         <form onSubmit={handleReturnSubmit} className="space-y-4">
           <p className="text-sm text-slate-400 leading-relaxed">
-            Record checking-in notes and review the current condition of the asset. This will revert the asset state back to <span className="font-semibold text-slate-700">Available</span>.
+            Record checking-in notes and review the current condition of the asset. This will revert the asset state back to <span className="font-semibold text-white/80">Available</span>.
           </p>
 
           <div>
@@ -567,10 +567,10 @@ const Assets = () => {
               value={conditionAtCheckIn} onChange={(e) => setConditionAtCheckIn(e.target.value)}
               className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
-              <option value="New">New</option>
-              <option value="Good">Good</option>
-              <option value="Fair">Fair</option>
-              <option value="Poor">Poor</option>
+              <option className="bg-[#0B172A] text-white" value="New">New</option>
+              <option className="bg-[#0B172A] text-white" value="Good">Good</option>
+              <option className="bg-[#0B172A] text-white" value="Fair">Fair</option>
+              <option className="bg-[#0B172A] text-white" value="Poor">Poor</option>
             </select>
           </div>
         </form>

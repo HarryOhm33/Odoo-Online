@@ -195,7 +195,7 @@ const Categories = () => {
           <>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -237,8 +237,8 @@ const Categories = () => {
           </div>
 
           {/* Dynamic Custom Fields Section */}
-          <div className="border border-slate-100 rounded-lg p-3 bg-slate-50/50">
-            <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+          <div className="border border-white/10 rounded-lg p-3 bg-white/5">
+            <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
               Dynamic Custom Fields
             </h4>
             <p className="text-xs text-slate-400 mb-3">
@@ -249,14 +249,14 @@ const Categories = () => {
             {customFields.length > 0 && (
               <div className="space-y-2 mb-3">
                 {customFields.map((field, idx) => (
-                  <div key={idx} className="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-sm">
-                    <span className="font-medium text-slate-700">
+                  <div key={idx} className="flex items-center justify-between bg-black/20 px-3 py-1.5 rounded-lg border border-white/10 text-sm">
+                    <span className="font-medium text-white">
                       {field.name} <span className="text-slate-400 font-normal">({field.type})</span>
                     </span>
                     <button
                       type="button"
                       onClick={() => handleRemoveCustomField(idx)}
-                      className="text-red-500 hover:text-red-700 p-1 cursor-pointer"
+                      className="text-red-400 hover:text-red-300 p-1 cursor-pointer transition-colors"
                     >
                       <FiTrash2 className="h-4 w-4" />
                     </button>
@@ -272,22 +272,22 @@ const Categories = () => {
                 placeholder="Field name (e.g. RAM)"
                 value={fieldName}
                 onChange={(e) => setFieldName(e.target.value)}
-                className="flex-1 min-w-0 px-2 py-1.5 border border-slate-200 rounded-lg text-xs text-white bg-white"
+                className="flex-1 min-w-0 px-2 py-1.5 border border-white/10 bg-black/20 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               />
               <select
                 value={fieldType}
                 onChange={(e) => setFieldType(e.target.value)}
-                className="px-2 py-1.5 border border-slate-200 rounded-lg text-xs text-white bg-white"
+                className="px-2 py-1.5 border border-white/10 bg-black/20 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
-                <option value="text">Text</option>
-                <option value="number">Number</option>
-                <option value="boolean">Yes/No</option>
-                <option value="date">Date</option>
+                <option className="bg-[#0B172A] text-white" value="text">Text</option>
+                <option className="bg-[#0B172A] text-white" value="number">Number</option>
+                <option className="bg-[#0B172A] text-white" value="boolean">Yes/No</option>
+                <option className="bg-[#0B172A] text-white" value="date">Date</option>
               </select>
               <button
                 type="button"
                 onClick={handleAddCustomField}
-                className="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold cursor-pointer"
+                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold cursor-pointer transition-colors"
               >
                 Add Field
               </button>
@@ -303,8 +303,8 @@ const Categories = () => {
               onChange={(e) => setStatus(e.target.value)}
               className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option className="bg-[#0B172A] text-white" value="Active">Active</option>
+              <option className="bg-[#0B172A] text-white" value="Inactive">Inactive</option>
             </select>
           </div>
         </form>

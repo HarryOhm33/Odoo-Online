@@ -39,13 +39,15 @@ const EmployeeTable = ({ employees, loading, onRowClick, onEdit, onResendActivat
       render: (_, row) => {
         const actions = [];
         
-        actions.push({ label: "Edit", icon: <FiEdit2 />, onClick: () => onEdit(row) });
+        if (onEdit) {
+          actions.push({ label: "Edit", icon: <FiEdit2 />, onClick: () => onEdit(row) });
+        }
         
-        if (!row.isVerified) {
+        if (onResendActivation && !row.isVerified) {
           actions.push({ label: "Resend Activation", icon: <FiMail />, onClick: () => onResendActivation(row) });
         }
         
-        if (row.role !== "Admin") {
+        if (onToggleStatus && row.role !== "Admin") {
           actions.push({
             label: row.status === "Active" ? "Deactivate" : "Activate",
             icon: <FiPower />,
@@ -53,9 +55,11 @@ const EmployeeTable = ({ employees, loading, onRowClick, onEdit, onResendActivat
           });
         }
         
-        if (row.role !== "Admin") {
+        if (onDelete && row.role !== "Admin") {
           actions.push({ label: "Delete", icon: <FiTrash2 />, danger: true, onClick: () => onDelete(row) });
         }
+
+        if (actions.length === 0) return null;
 
         return <ActionMenu actions={actions} />;
       },
