@@ -19,7 +19,10 @@ router.get(
   wrapAsync(async (req, res) => {
     try {
       const orgId = req.user.organization?._id || req.user.organization;
+      console.log("Analytics Route hit! User organization from JWT:", req.user.organization);
+      console.log("Analytics Route orgId resolved:", orgId);
       const organization = new mongoose.Types.ObjectId(orgId);
+      console.log("Analytics Route organization ObjectId:", organization);
 
       // Start of current month
       const startOfMonth = new Date();

@@ -195,13 +195,13 @@ const Categories = () => {
           <>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer"
             >
               Save
             </button>
@@ -210,7 +210,7 @@ const Categories = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Category Name *
             </label>
             <input
@@ -218,19 +218,19 @@ const Categories = () => {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               placeholder="e.g. Electronics"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               rows={2}
               placeholder="Short description..."
             />
@@ -272,12 +272,12 @@ const Categories = () => {
                 placeholder="Field name (e.g. RAM)"
                 value={fieldName}
                 onChange={(e) => setFieldName(e.target.value)}
-                className="flex-1 min-w-0 px-2 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-800 bg-white"
+                className="flex-1 min-w-0 px-2 py-1.5 border border-slate-200 rounded-lg text-xs text-white bg-white"
               />
               <select
                 value={fieldType}
                 onChange={(e) => setFieldType(e.target.value)}
-                className="px-2 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-800 bg-white"
+                className="px-2 py-1.5 border border-slate-200 rounded-lg text-xs text-white bg-white"
               >
                 <option value="text">Text</option>
                 <option value="number">Number</option>
@@ -295,13 +295,13 @@ const Categories = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Status
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>

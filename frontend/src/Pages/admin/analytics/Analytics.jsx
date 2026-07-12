@@ -35,24 +35,24 @@ const Analytics = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard title="Total Assets"           value={loading ? "..." : (kpis.totalAssets ?? 0)} icon={FiBox}       color="blue"   />
-        <StatCard title="Assets Allocated"       value={loading ? "..." : (kpis.allocatedAssets ?? 0)} icon={FiUsers}     color="green"  />
-        <StatCard title="Maintenance This Month" value={loading ? "..." : (kpis.maintenanceThisMonth ?? 0)} icon={FiTool}      color="amber"  />
-        <StatCard title="Active Bookings"        value={loading ? "..." : (kpis.activeBookings ?? 0)} icon={FiCalendar}  color="violet" />
-        <StatCard title="Pending Approvals"      value={loading ? "..." : (kpis.pendingApprovals ?? 0)} icon={FiTrendingUp}color="red"    />
-        <StatCard title="Asset Utilization"      value={loading ? "..." : `${kpis.assetUtilization ?? 0}%`} icon={FiBarChart2} color="slate"  />
+        <StatCard title="Total Assets" value={loading ? "..." : (kpis.totalAssets ?? 0)} icon={FiBox} color="blue" />
+        <StatCard title="Assets Allocated" value={loading ? "..." : (kpis.allocatedAssets ?? 0)} icon={FiUsers} color="green" />
+        <StatCard title="Maintenance This Month" value={loading ? "..." : (kpis.maintenanceThisMonth ?? 0)} icon={FiTool} color="amber" />
+        <StatCard title="Active Bookings" value={loading ? "..." : (kpis.activeBookings ?? 0)} icon={FiCalendar} color="violet" />
+        <StatCard title="Pending Approvals" value={loading ? "..." : (kpis.pendingApprovals ?? 0)} icon={FiTrendingUp} color="red" />
+        <StatCard title="Asset Utilization" value={loading ? "..." : `${kpis.assetUtilization ?? 0}%`} icon={FiBarChart2} color="slate" />
       </div>
 
       {loading ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-pulse">
-          <div className="bg-white p-6 rounded-lg border border-slate-200 h-80" />
-          <div className="bg-white p-6 rounded-lg border border-slate-200 h-80" />
+          <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-xl border border-white/10 h-80 shadow-lg" />
+          <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-xl border border-white/10 h-80 shadow-lg" />
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Category Breakdown */}
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 flex flex-col">
-            <h3 className="text-slate-800 font-semibold text-base mb-4 flex items-center gap-2">
+          <div className="bg-slate-900/40 backdrop-blur-md rounded-xl border border-white/10 shadow-lg p-6 flex flex-col">
+            <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
               <FiBox className="text-blue-500 h-5 w-5" />
               Category Breakdown
             </h3>
@@ -64,10 +64,10 @@ const Analytics = () => {
                   return (
                     <div key={cat.id || cat.name} className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-700 font-medium">{cat.name}</span>
-                        <span className="text-slate-500">{cat.count} asset{cat.count !== 1 ? "s" : ""}</span>
+                        <span className="text-slate-300 font-medium">{cat.name}</span>
+                        <span className="text-slate-400">{cat.count} asset{cat.count !== 1 ? "s" : ""}</span>
                       </div>
-                      <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden">
                         <div
                           className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
@@ -83,8 +83,8 @@ const Analytics = () => {
           </div>
 
           {/* Status Distribution */}
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 flex flex-col">
-            <h3 className="text-slate-800 font-semibold text-base mb-4 flex items-center gap-2">
+          <div className="bg-slate-900/40 backdrop-blur-md rounded-xl border border-white/10 shadow-lg p-6 flex flex-col">
+            <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
               <FiActivity className="text-emerald-500 h-5 w-5" />
               Asset Status Distribution
             </h3>
@@ -96,10 +96,10 @@ const Analytics = () => {
                     .map((item) => (
                       <div
                         key={item.status}
-                        className="flex flex-col p-3 border border-slate-100 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                        className="flex flex-col p-3 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
                       >
                         <span className="text-xs text-slate-400 font-medium mb-1">{item.status}</span>
-                        <span className="text-xl font-bold text-slate-800">{item.count}</span>
+                        <span className="text-xl font-bold text-white">{item.count}</span>
                       </div>
                     ))}
                 </div>
@@ -110,8 +110,8 @@ const Analytics = () => {
           </div>
 
           {/* Department Allocation */}
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 flex flex-col">
-            <h3 className="text-slate-800 font-semibold text-base mb-4 flex items-center gap-2">
+          <div className="bg-slate-900/40 backdrop-blur-md rounded-xl border border-white/10 shadow-lg p-6 flex flex-col">
+            <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
               <FiUsers className="text-violet-500 h-5 w-5" />
               Department Allocation
             </h3>
@@ -124,16 +124,16 @@ const Analytics = () => {
                     <div key={dept.id || dept.name} className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2">
-                          <span className="text-slate-700 font-medium">{dept.name}</span>
+                          <span className="text-slate-300 font-medium">{dept.name}</span>
                           {dept.code && (
-                            <span className="px-1.5 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-600 rounded">
+                            <span className="px-1.5 py-0.5 text-[10px] font-bold bg-white/10 text-slate-300 rounded">
                               {dept.code}
                             </span>
                           )}
                         </div>
-                        <span className="text-slate-500">{dept.count} asset{dept.count !== 1 ? "s" : ""}</span>
+                        <span className="text-slate-400">{dept.count} asset{dept.count !== 1 ? "s" : ""}</span>
                       </div>
-                      <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden">
                         <div
                           className="bg-gradient-to-r from-violet-500 to-fuchsia-500 h-full rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
@@ -149,8 +149,8 @@ const Analytics = () => {
           </div>
 
           {/* Maintenance Status Breakdown */}
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 flex flex-col">
-            <h3 className="text-slate-800 font-semibold text-base mb-4 flex items-center gap-2">
+          <div className="bg-slate-900/40 backdrop-blur-md rounded-xl border border-white/10 shadow-lg p-6 flex flex-col">
+            <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
               <FiTool className="text-amber-500 h-5 w-5" />
               Maintenance Requests Breakdown
             </h3>
@@ -162,10 +162,10 @@ const Analytics = () => {
                     .map((item) => (
                       <div
                         key={item.status}
-                        className="flex flex-col p-3 border border-slate-100 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                        className="flex flex-col p-3 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
                       >
                         <span className="text-xs text-slate-400 font-medium mb-1">{item.status}</span>
-                        <span className="text-xl font-bold text-slate-800">{item.count}</span>
+                        <span className="text-xl font-bold text-white">{item.count}</span>
                       </div>
                     ))}
                 </div>

@@ -190,8 +190,8 @@ const Transfers = () => {
         title="Initiate Asset Transfer"
         footer={
           <>
-            <button onClick={() => setIsRequestModalOpen(false)} className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">Cancel</button>
-            <button onClick={handleSubmitRequest} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">
+            <button onClick={() => setIsRequestModalOpen(false)} className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">Cancel</button>
+            <button onClick={handleSubmitRequest} className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer">
               {canApprove ? "Transfer Now" : "Submit Request"}
             </button>
           </>
@@ -199,7 +199,7 @@ const Transfers = () => {
       >
         <form onSubmit={handleSubmitRequest} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Select Asset to Transfer *</label>
+            <label className="block text-sm font-medium text-white mb-1">Select Asset to Transfer *</label>
             <select value={selectedAsset} required onChange={(e) => setSelectedAsset(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">Choose asset...</option>
               {myAssets.map(a => (
@@ -217,7 +217,7 @@ const Transfers = () => {
           </div>
           {transferType === "user" ? (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Target Employee *</label>
+              <label className="block text-sm font-medium text-white mb-1">Target Employee *</label>
               <select value={targetUser} required onChange={(e) => setTargetUser(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Choose employee...</option>
                 {employees.filter(e => e._id !== user.id).map(emp => (
@@ -227,7 +227,7 @@ const Transfers = () => {
             </div>
           ) : (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Target Department *</label>
+              <label className="block text-sm font-medium text-white mb-1">Target Department *</label>
               <select value={targetDepartment} required onChange={(e) => setTargetDepartment(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Choose department...</option>
                 {departments.map(d => (
@@ -237,7 +237,7 @@ const Transfers = () => {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Reason for Transfer *</label>
+            <label className="block text-sm font-medium text-white mb-1">Reason for Transfer *</label>
             <textarea required value={reason} onChange={(e) => setReason(e.target.value)} rows="3" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Why are you transferring this asset?" />
           </div>
         </form>

@@ -19,7 +19,7 @@ const NotificationList = ({ notifications = [], loading, onMarkRead }) => {
     return (
       <div className="bg-white rounded-lg border border-slate-200 py-12 flex flex-col items-center">
         <FiBell className="h-10 w-10 text-slate-200 mb-3" />
-        <p className="text-slate-500 text-sm">No notifications</p>
+        <p className="text-slate-400 text-sm">No notifications</p>
       </div>
     );
   }
@@ -35,7 +35,7 @@ const NotificationList = ({ notifications = [], loading, onMarkRead }) => {
         >
           <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.isRead ? "bg-slate-300" : "bg-blue-500"}`} />
           <div className="flex-1 min-w-0">
-            <p className={`text-sm ${n.isRead ? "text-slate-600" : "text-slate-800 font-medium"}`}>
+            <p className={`text-sm ${n.isRead ? "text-slate-600" : "text-white font-medium"}`}>
               {n.message}
             </p>
             <p className="text-xs text-slate-400 mt-0.5">

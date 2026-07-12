@@ -13,9 +13,9 @@ const Forbidden = () => {
         <div className="w-20 h-20 bg-red-50 border border-red-200 rounded-full flex items-center justify-center mx-auto mb-6">
           <FiShield className="h-9 w-9 text-red-500" />
         </div>
-        <h1 className="text-4xl font-bold text-slate-800 mb-2">403</h1>
+        <h1 className="text-4xl font-bold text-white mb-2">403</h1>
         <h2 className="text-xl font-semibold text-slate-700 mb-3">Access Forbidden</h2>
-        <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+        <p className="text-slate-400 text-sm mb-8 leading-relaxed">
           You don't have permission to view this page. If you believe this is a
           mistake, please contact your system administrator.
         </p>

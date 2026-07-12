@@ -206,13 +206,13 @@ const Audits = () => {
           <>
             <button
               onClick={() => setIsCreateModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleCreateSubmit}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer"
             >
               Create Cycle
             </button>
@@ -221,24 +221,24 @@ const Audits = () => {
       >
         <form onSubmit={handleCreateSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Audit Title *
             </label>
             <input
               type="text" required value={title} onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               placeholder="e.g. Q3 HQ Tech Audit"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Department Scope
               </label>
               <select
                 value={scopeDepartment} onChange={(e) => setScopeDepartment(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
                 <option value="">All Departments</option>
                 {departments.map((d) => (
@@ -250,39 +250,39 @@ const Audits = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Location Scope
               </label>
               <input
                 type="text" value={scopeLocation} onChange={(e) => setScopeLocation(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                 placeholder="e.g. HQ Block A"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Start Date *
               </label>
               <input
                 type="date" required value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 End Date *
               </label>
               <input
                 type="date" required value={endDate} onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-white mb-1.5">
               Assign Auditors *
             </label>
             <div className="border border-slate-200 rounded-lg p-3 bg-slate-50/50 max-h-40 overflow-y-auto space-y-2">
@@ -321,7 +321,7 @@ const Audits = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsChecklistOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+                className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
               >
                 Close View
               </button>
@@ -339,9 +339,9 @@ const Audits = () => {
       >
         <div className="space-y-4">
           <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm grid grid-cols-2 gap-2">
-            <p className="text-slate-500"><span className="font-semibold text-slate-700">Scope Department:</span> {selectedAudit?.scopeDepartment?.name || "All Departments"}</p>
-            <p className="text-slate-500"><span className="font-semibold text-slate-700">Scope Location:</span> {selectedAudit?.scopeLocation || "All Locations"}</p>
-            <p className="text-slate-500"><span className="font-semibold text-slate-700">Current Status:</span> {selectedAudit?.status}</p>
+            <p className="text-slate-400"><span className="font-semibold text-slate-700">Scope Department:</span> {selectedAudit?.scopeDepartment?.name || "All Departments"}</p>
+            <p className="text-slate-400"><span className="font-semibold text-slate-700">Scope Location:</span> {selectedAudit?.scopeLocation || "All Locations"}</p>
+            <p className="text-slate-400"><span className="font-semibold text-slate-700">Current Status:</span> {selectedAudit?.status}</p>
           </div>
 
           <Table

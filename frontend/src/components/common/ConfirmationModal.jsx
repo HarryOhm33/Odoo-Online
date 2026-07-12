@@ -27,7 +27,7 @@ const ConfirmationModal = ({
         <>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50"
+            className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
           >
             Cancel
           </button>
@@ -42,10 +42,10 @@ const ConfirmationModal = ({
       }
     >
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center flex-shrink-0">
-          <FiAlertTriangle className="h-5 w-5 text-red-600" />
+        <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-red-500/30">
+          <FiAlertTriangle className="h-5 w-5 text-red-400" />
         </div>
-        <p className="text-slate-600 text-sm leading-relaxed pt-2">{message}</p>
+        <p className="text-slate-300 text-sm leading-relaxed pt-2">{message}</p>
       </div>
     </Modal>
   );

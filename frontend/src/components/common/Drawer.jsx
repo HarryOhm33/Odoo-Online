@@ -23,7 +23,7 @@ const Drawer = ({ isOpen, onClose, title, children }) => {
           <div className="h-full flex flex-col bg-white shadow-xl">
             {/* Header */}
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-800">{title}</h2>
+              <h2 className="text-lg font-semibold text-white">{title}</h2>
               <button
                 onClick={onClose}
                 className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"

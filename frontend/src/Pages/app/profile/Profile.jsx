@@ -13,8 +13,8 @@ const roleColor = {
 const InfoRow = ({ icon: Icon, label, value }) => (
   <div className="flex items-center gap-3 py-3 border-b border-slate-100 last:border-0">
     <Icon className="h-4 w-4 text-slate-400 flex-shrink-0" />
-    <span className="text-slate-500 text-sm w-32 flex-shrink-0">{label}</span>
-    <span className="text-slate-800 text-sm font-medium truncate">{value || "—"}</span>
+    <span className="text-slate-400 text-sm w-32 flex-shrink-0">{label}</span>
+    <span className="text-white text-sm font-medium truncate">{value || "—"}</span>
   </div>
 );
 
@@ -43,8 +43,8 @@ const Profile = () => {
             </span>
           </div>
           <div>
-            <h2 className="text-slate-800 font-bold text-lg">{user?.name}</h2>
-            <p className="text-slate-500 text-sm">{user?.email}</p>
+            <h2 className="text-white font-bold text-lg">{user?.name}</h2>
+            <p className="text-slate-400 text-sm">{user?.email}</p>
           </div>
           <Badge label={user?.role} color={roleColor[user?.role] || "slate"} />
           <div className="flex items-center gap-1.5">
@@ -57,8 +57,8 @@ const Profile = () => {
 
         {/* Info */}
         <div className="lg:col-span-2 bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-          <h3 className="text-slate-800 font-semibold text-sm mb-1">Account Details</h3>
-          <p className="text-slate-500 text-xs mb-4">Your personal information</p>
+          <h3 className="text-white font-semibold text-sm mb-1">Account Details</h3>
+          <p className="text-slate-400 text-xs mb-4">Your personal information</p>
 
           <InfoRow icon={FiUser}     label="Full Name"    value={user?.name}   />
           <InfoRow icon={FiMail}     label="Email"        value={user?.email}  />

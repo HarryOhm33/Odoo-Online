@@ -30,18 +30,18 @@ const Modal = ({
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Modal panel */}
-      <div className={`relative bg-white rounded-lg shadow-xl w-full ${sizeMap[size] || sizeMap.md} max-h-[90vh] flex flex-col`}>
+      <div className={`relative bg-slate-900 border border-white/10 rounded-xl shadow-2xl w-full ${sizeMap[size] || sizeMap.md} max-h-[90vh] flex flex-col`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 flex-shrink-0">
-          <h3 className="text-base font-semibold text-slate-800">{title}</h3>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 flex-shrink-0 bg-white/5">
+          <h3 className="text-base font-semibold text-white tracking-wide">{title}</h3>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded"
+            className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
           >
             <FiX className="h-5 w-5" />
           </button>
@@ -54,7 +54,7 @@ const Modal = ({
 
         {/* Footer */}
         {footer && (
-          <div className="px-5 py-4 border-t border-slate-200 flex items-center justify-end gap-2 flex-shrink-0">
+          <div className="px-5 py-4 border-t border-white/10 flex items-center justify-end gap-2 flex-shrink-0 bg-white/5">
             {footer}
           </div>
         )}

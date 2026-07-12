@@ -30,8 +30,8 @@ const Reports = () => {
               <FiFileText className="h-5 w-5 text-blue-600" />
             </div>
             <div className="flex-1">
-              <h3 className="text-slate-800 font-semibold text-sm">{r.title}</h3>
-              <p className="text-slate-500 text-xs mt-1">{r.desc}</p>
+              <h3 className="text-white font-semibold text-sm">{r.title}</h3>
+              <p className="text-slate-400 text-xs mt-1">{r.desc}</p>
             </div>
             {canGenerate && (
               <button className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-700 text-xs font-medium cursor-pointer">

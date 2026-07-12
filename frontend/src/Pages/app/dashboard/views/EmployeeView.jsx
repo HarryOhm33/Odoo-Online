@@ -11,7 +11,7 @@ const EmployeeView = ({ stats }) => {
     <div className="space-y-6">
       {/* Quick Actions */}
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
-        <h3 className="text-slate-800 font-semibold text-sm mb-4">Quick Actions</h3>
+        <h3 className="text-white font-semibold text-sm mb-4">Quick Actions</h3>
         <div className="flex flex-wrap gap-4">
           <Link to="/app/maintenance" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors">
             <FiTool /> Raise Maintenance Request
@@ -35,11 +35,11 @@ const EmployeeView = ({ stats }) => {
       </div>
 
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
-        <h3 className="text-slate-800 font-semibold text-sm mb-4 flex items-center gap-2">
+        <h3 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
           <FiBell className="text-slate-400" /> Recent Notifications
         </h3>
         <div className="space-y-3">
-          <p className="text-slate-500 text-sm">No recent notifications.</p>
+          <p className="text-slate-400 text-sm">No recent notifications.</p>
         </div>
       </div>
     </div>

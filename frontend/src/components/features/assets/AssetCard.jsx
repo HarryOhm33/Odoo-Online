@@ -24,17 +24,17 @@ const AssetCard = ({ asset, onClick, onEdit }) => (
       <Badge label={asset.status || "Unknown"} color={statusColor[asset.status] || "slate"} />
     </div>
 
-    <h3 className="text-slate-800 font-semibold text-sm truncate">{asset.name}</h3>
+    <h3 className="text-white font-semibold text-sm truncate">{asset.name}</h3>
 
     <div className="mt-2 space-y-1">
       {asset.assetTag && (
-        <p className="text-slate-500 text-xs flex items-center gap-1.5">
+        <p className="text-slate-400 text-xs flex items-center gap-1.5">
           <FiTag className="h-3.5 w-3.5" />
           {asset.assetTag}
         </p>
       )}
       {asset.assignedTo && (
-        <p className="text-slate-500 text-xs flex items-center gap-1.5">
+        <p className="text-slate-400 text-xs flex items-center gap-1.5">
           <FiUser className="h-3.5 w-3.5" />
           {asset.assignedTo?.name || asset.assignedTo}
         </p>

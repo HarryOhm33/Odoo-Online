@@ -197,13 +197,13 @@ const Allocations = () => {
           <>
             <button
               onClick={() => setIsReturnOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleReturnSubmit}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer"
             >
               Confirm Return
             </button>
@@ -211,17 +211,17 @@ const Allocations = () => {
         }
       >
         <form onSubmit={handleReturnSubmit} className="space-y-4">
-          <p className="text-sm text-slate-500 leading-relaxed">
+          <p className="text-sm text-slate-400 leading-relaxed">
             Record check-in condition notes to release the asset back into inventory as <span className="font-semibold text-slate-700">Available</span>.
           </p>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Check-in Condition
             </label>
             <select
               value={conditionAtCheckIn}
               onChange={(e) => setCondition(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
               <option value="New">New</option>
               <option value="Good">Good</option>
@@ -241,13 +241,13 @@ const Allocations = () => {
           <>
             <button
               onClick={() => setIsAllocateOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleAllocateSubmit}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer"
             >
               Allocate
             </button>
@@ -256,10 +256,10 @@ const Allocations = () => {
       >
         <form onSubmit={handleAllocateSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Select Asset to Allocate *</label>
+            <label className="block text-sm font-medium text-white mb-1">Select Asset to Allocate *</label>
             <select
               value={allocateAssetId} required onChange={(e) => setAllocateAssetId(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
               <option value="">Choose an available asset...</option>
               {availableAssets.map((asset) => (
@@ -292,10 +292,10 @@ const Allocations = () => {
 
           {allocateType === "user" ? (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Select Employee *</label>
+              <label className="block text-sm font-medium text-white mb-1">Select Employee *</label>
               <select
                 value={allocateUser} required onChange={(e) => setAllocateUser(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
                 <option value="">Choose employee...</option>
                 {employees.map((emp) => (
@@ -305,10 +305,10 @@ const Allocations = () => {
             </div>
           ) : (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Select Department *</label>
+              <label className="block text-sm font-medium text-white mb-1">Select Department *</label>
               <select
                 value={allocateDept} required onChange={(e) => setAllocateDept(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               >
                 <option value="">Choose department...</option>
                 {departments.map((dept) => (
@@ -321,10 +321,10 @@ const Allocations = () => {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Expected Return Date</label>
+            <label className="block text-sm font-medium text-white mb-1">Expected Return Date</label>
             <input
               type="date" value={expectedReturnDate} onChange={(e) => setExpectedReturnDate(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             />
           </div>
         </form>

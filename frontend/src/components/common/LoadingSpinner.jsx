@@ -4,7 +4,7 @@ const LoadingSpinner = ({ fullscreen = false, message = "Loading..." }) => {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-slate-500 text-sm font-medium">{message}</p>
+        <p className="text-slate-400 text-sm font-medium">{message}</p>
       </div>
     );
   }

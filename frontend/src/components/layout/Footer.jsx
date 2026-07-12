@@ -238,7 +238,7 @@ export default function Footer() {
                 <Mail className="mt-1 text-cyan-400 animate-pulse" />
 
                 <div>
-                  <p className="text-sm text-slate-500">Email</p>
+                  <p className="text-sm text-slate-400">Email</p>
                   <a
                     href="https://mail.google.com/mail/?view=cm&fs=1&to=assetflow@example.com"
                     target="_blank"
@@ -254,7 +254,7 @@ export default function Footer() {
                 <Phone className="mt-1 text-cyan-400" />
 
                 <div>
-                  <p className="text-sm text-slate-500">Phone</p>
+                  <p className="text-sm text-slate-400">Phone</p>
                   <a
                     href="tel:+919876543210"
                     className="text-slate-300 transition hover:text-cyan-400 font-medium"
@@ -268,7 +268,7 @@ export default function Footer() {
                 <MapPin className="mt-1 text-cyan-400 animate-bounce" />
 
                 <div>
-                  <p className="text-sm text-slate-500">Address</p>
+                  <p className="text-sm text-slate-400">Address</p>
                   <a
                     href="https://maps.google.com/?q=Bengaluru,India"
                     target="_blank"
@@ -288,11 +288,11 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-400">
             © {new Date().getFullYear()} AssetFlow ERP. All Rights Reserved.
           </p>
 
-          <div className="flex gap-8 text-sm text-slate-500">
+          <div className="flex gap-8 text-sm text-slate-400">
             <a href="#" className="transition hover:text-cyan-400">
               Privacy Policy
             </a>

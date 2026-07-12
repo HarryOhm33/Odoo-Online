@@ -4,7 +4,7 @@ const FilterBar = ({ filters }) => {
   // filters is an array of objects: { label, value, options: [{label, value}], onChange }
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <div className="flex items-center gap-2 text-slate-500 text-sm">
+      <div className="flex items-center gap-2 text-slate-400 text-sm">
         <FiFilter className="w-4 h-4" />
         <span className="font-medium">Filters:</span>
       </div>

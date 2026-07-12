@@ -171,14 +171,14 @@ const Employees = () => {
   });
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col h-[calc(100vh-100px)] space-y-5">
       <PageHeader
         title="Employee Directory"
         subtitle="Manage employees, promote/assign roles, and structure departments"
         actions={
           <button
             onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.3)]"
           >
             <FiPlus className="h-4 w-4" />
             Add Employee
@@ -225,15 +225,17 @@ const Employees = () => {
         />
       </div>
 
-      <EmployeeTable
-        employees={filteredEmployees}
-        loading={loading}
-        onRowClick={handleRowClick}
-        onEdit={handleOpenEdit}
-        onResendActivation={handleResendActivation}
-        onToggleStatus={handleToggleStatus}
-        onDelete={handleDeleteClick}
-      />
+      <div className="flex-1 overflow-hidden">
+        <EmployeeTable
+          employees={filteredEmployees}
+          loading={loading}
+          onRowClick={handleRowClick}
+          onEdit={handleOpenEdit}
+          onResendActivation={handleResendActivation}
+          onToggleStatus={handleToggleStatus}
+          onDelete={handleDeleteClick}
+        />
+      </div>
 
       <Modal
         isOpen={isModalOpen}
@@ -243,13 +245,13 @@ const Employees = () => {
           <>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer"
             >
               Save
             </button>
@@ -258,7 +260,7 @@ const Employees = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Full Name *
             </label>
             <div className="relative">
@@ -268,14 +270,14 @@ const Employees = () => {
                 required
                 value={createName}
                 onChange={(e) => setCreateName(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                 placeholder="John Doe"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Email Address *
             </label>
             <div className="relative">
@@ -285,7 +287,7 @@ const Employees = () => {
                 required
                 value={createEmail}
                 onChange={(e) => setCreateEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                 placeholder="john@organization.com"
                 disabled={!isCreateMode} // Usually shouldn't change email after creation easily
               />
@@ -293,13 +295,13 @@ const Employees = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Role Promotion *
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
               disabled={!isCreateMode && editingEmp?.role === "Admin"} // Prevent changing admin's role
             >
               <option value="Employee">Employee (Operational)</option>
@@ -309,13 +311,13 @@ const Employees = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Department Assignment
             </label>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
             >
               <option value="">No department assigned</option>
               {departments.map((dept) => (
@@ -328,13 +330,13 @@ const Employees = () => {
 
           {!isCreateMode && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Account Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                 disabled={editingEmp?.role === "Admin"} // Prevent deactivating admin from here
               >
                 <option value="Active">Active</option>
@@ -363,12 +365,12 @@ const Employees = () => {
         {selectedEmp && (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-2xl">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl border border-white/10 shadow-lg">
                 {selectedEmp.name?.[0]?.toUpperCase()}
               </div>
               <div>
-                <h3 className="text-xl font-bold text-slate-800">{selectedEmp.name}</h3>
-                <p className="text-slate-500">{selectedEmp.role}</p>
+                <h3 className="text-xl font-bold text-white">{selectedEmp.name}</h3>
+                <p className="text-slate-400">{selectedEmp.role}</p>
                 <div className="mt-1 flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded text-xs font-medium ${selectedEmp.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                     {selectedEmp.status}
@@ -382,11 +384,11 @@ const Employees = () => {
               </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-xl space-y-3">
-              <h4 className="text-sm font-semibold text-slate-700 mb-2">Contact Information</h4>
-              <div className="flex items-center gap-3 text-sm text-slate-600">
+            <div className="bg-slate-900/50 backdrop-blur-md border border-white/10 p-4 rounded-xl space-y-3 shadow-lg">
+              <h4 className="text-sm font-semibold text-white mb-2">Contact Information</h4>
+              <div className="flex items-center gap-3 text-sm text-slate-300">
                 <FiMail className="text-slate-400" />
-                <a href={`mailto:${selectedEmp.email}`} className="hover:text-blue-600 transition-colors">{selectedEmp.email}</a>
+                <a href={`mailto:${selectedEmp.email}`} className="hover:text-blue-400 transition-colors">{selectedEmp.email}</a>
               </div>
               {selectedEmp.phone && (
                 <div className="flex items-center gap-3 text-sm text-slate-600">
@@ -396,9 +398,9 @@ const Employees = () => {
               )}
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-xl space-y-3">
-              <h4 className="text-sm font-semibold text-slate-700 mb-2">Organization Details</h4>
-              <div className="flex items-center gap-3 text-sm text-slate-600">
+            <div className="bg-slate-900/50 backdrop-blur-md border border-white/10 p-4 rounded-xl space-y-3 shadow-lg">
+              <h4 className="text-sm font-semibold text-white mb-2">Organization Details</h4>
+              <div className="flex items-center gap-3 text-sm text-slate-300">
                 <FiBriefcase className="text-slate-400" />
                 <span>{selectedEmp.department?.name || "No Department Assigned"}</span>
               </div>
