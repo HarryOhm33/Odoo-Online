@@ -1,7 +1,10 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import Navbar from "./components/Navbar";
+// import Navbar from "./components/Navbar";
+
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
 import Home from "./Pages/Home";
 import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
@@ -12,6 +15,7 @@ import ProtectedRoute from "./components/Protected/ProtectedRoute";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
 import Profile from "./Pages/Profile";
+
 
 function App() {
   return (
@@ -34,8 +38,11 @@ function App() {
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
+        <Footer />
+
       </AuthProvider>
     </Router>
+    
   );
 }
 
