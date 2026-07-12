@@ -10,13 +10,13 @@ const EmployeeView = ({ stats }) => {
   return (
     <div className="space-y-6">
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
+      <div className="bg-[#0B172A] rounded-lg border border-white/10 shadow-sm p-5 hover:border-white/20 transition-colors">
         <h3 className="text-white font-semibold text-sm mb-4">Quick Actions</h3>
         <div className="flex flex-wrap gap-4">
-          <Link to="/app/maintenance" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors">
+          <Link to="/app/maintenance" className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-medium hover:bg-blue-500/20 transition-colors">
             <FiTool /> Raise Maintenance Request
           </Link>
-          <Link to="/app/bookings" className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-100 transition-colors">
+          <Link to="/app/bookings" className="flex items-center gap-2 px-4 py-2 bg-white/5 text-slate-300 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors">
             <FiCalendar /> Request Resource
           </Link>
         </div>
@@ -34,7 +34,7 @@ const EmployeeView = ({ stats }) => {
         ))}
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
+      <div className="bg-[#0B172A] rounded-lg border border-white/10 shadow-sm p-5 hover:border-white/20 transition-colors">
         <h3 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
           <FiBell className="text-slate-400" /> Recent Notifications
         </h3>

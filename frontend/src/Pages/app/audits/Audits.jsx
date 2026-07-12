@@ -206,7 +206,7 @@ const Audits = () => {
           <>
             <button
               onClick={() => setIsCreateModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -321,7 +321,7 @@ const Audits = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsChecklistOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+                className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
               >
                 Close View
               </button>
@@ -338,10 +338,10 @@ const Audits = () => {
         }
       >
         <div className="space-y-4">
-          <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm grid grid-cols-2 gap-2">
-            <p className="text-slate-400"><span className="font-semibold text-slate-700">Scope Department:</span> {selectedAudit?.scopeDepartment?.name || "All Departments"}</p>
-            <p className="text-slate-400"><span className="font-semibold text-slate-700">Scope Location:</span> {selectedAudit?.scopeLocation || "All Locations"}</p>
-            <p className="text-slate-400"><span className="font-semibold text-slate-700">Current Status:</span> {selectedAudit?.status}</p>
+          <div className="bg-[#08111F] border border-white/10 rounded-lg p-3 text-sm grid grid-cols-2 gap-2">
+            <p className="text-slate-400"><span className="font-semibold text-slate-200">Scope Department:</span> {selectedAudit?.scopeDepartment?.name || "All Departments"}</p>
+            <p className="text-slate-400"><span className="font-semibold text-slate-200">Scope Location:</span> {selectedAudit?.scopeLocation || "All Locations"}</p>
+            <p className="text-slate-400"><span className="font-semibold text-slate-200">Current Status:</span> {selectedAudit?.status}</p>
           </div>
 
           <Table

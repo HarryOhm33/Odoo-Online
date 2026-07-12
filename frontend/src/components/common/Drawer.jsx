@@ -20,13 +20,13 @@ const Drawer = ({ isOpen, onClose, title, children }) => {
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onClick={onClose} />
       <div className="fixed inset-y-0 right-0 max-w-full flex">
         <div className="w-screen max-w-md transform transition-transform duration-300 ease-in-out translate-x-0">
-          <div className="h-full flex flex-col bg-white shadow-xl">
+          <div className="h-full flex flex-col bg-[#0B172A] border-l border-white/10 shadow-2xl">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-white">{title}</h2>
               <button
                 onClick={onClose}
-                className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
+                className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/5 transition-colors"
               >
                 <FiX className="w-5 h-5" />
               </button>
