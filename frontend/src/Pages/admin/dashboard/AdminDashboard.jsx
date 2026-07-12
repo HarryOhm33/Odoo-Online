@@ -1,16 +1,11 @@
 // src/pages/admin/dashboard/AdminDashboard.jsx
+import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import StatCard from "../../../components/common/StatCard";
 import PageHeader from "../../../components/common/PageHeader";
-import { FiUsers, FiLayers, FiTag, FiCheckCircle, FiActivity, FiPlus } from "react-icons/fi";
+import { FiUsers, FiLayers, FiTag, FiCheckCircle, FiActivity } from "react-icons/fi";
 import { Link } from "react-router-dom";
-
-const recentActivity = [
-  { id: 1, action: "Employee added",      user: "Admin",     time: "Just now",    dot: "bg-blue-500"   },
-  { id: 2, action: "Department created",  user: "Admin",     time: "2 hours ago", dot: "bg-green-500"  },
-  { id: 3, action: "Category updated",    user: "Admin",     time: "Yesterday",   dot: "bg-amber-500"  },
-  { id: 4, action: "Organization setup",  user: "System",    time: "Day 1",       dot: "bg-violet-500" },
-];
+import api from "../../../services/api";
 
 const quickLinks = [
   { label: "Add Employee",      icon: FiUsers,  route: "/admin/employees",    color: "bg-blue-600"    },
@@ -21,6 +16,23 @@ const quickLinks = [
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get("/api/dashboard");
+        setStats(res.data.stats);
+      } catch (err) {
+        console.error("Failed to fetch dashboard stats", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -51,21 +63,21 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Total Employees"
-          value="—"
+          value={loading ? "..." : (stats?.employeesCount ?? 0)}
           icon={FiUsers}
           color="blue"
           subtitle="Across all departments"
         />
         <StatCard
           title="Departments"
-          value="—"
+          value={loading ? "..." : (stats?.departmentsCount ?? 0)}
           icon={FiLayers}
           color="green"
           subtitle="Active departments"
         />
         <StatCard
           title="Asset Categories"
-          value="—"
+          value={loading ? "..." : (stats?.categoriesCount ?? 0)}
           icon={FiTag}
           color="amber"
           subtitle="Defined categories"
@@ -111,16 +123,29 @@ const AdminDashboard = () => {
             <span className="text-xs text-slate-400">Last 7 days</span>
           </div>
           <div className="space-y-3">
-            {recentActivity.map((item) => (
-              <div key={item.id} className="flex items-center gap-3">
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${item.dot}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-slate-700 text-sm truncate">{item.action}</p>
-                  <p className="text-slate-400 text-xs">{item.user}</p>
-                </div>
-                <span className="text-slate-400 text-xs flex-shrink-0">{item.time}</span>
+            {loading ? (
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 py-1">
+                    <div className="w-2 h-2 bg-slate-200 rounded-full flex-shrink-0" />
+                    <div className="h-3 bg-slate-100 rounded flex-1 animate-pulse" />
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : stats?.recentActivity && stats.recentActivity.length > 0 ? (
+              stats.recentActivity.map((item) => (
+                <div key={item.id} className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${item.dot}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-slate-700 text-sm truncate">{item.action}</p>
+                    <p className="text-slate-400 text-xs">{item.user}</p>
+                  </div>
+                  <span className="text-slate-400 text-xs flex-shrink-0">{item.time}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-slate-400 text-xs text-center py-4">No recent activity found.</p>
+            )}
           </div>
         </div>
       </div>

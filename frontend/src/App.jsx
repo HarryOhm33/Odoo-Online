@@ -14,8 +14,6 @@ import EmployeeLayout from "./components/layout/EmployeeLayout";
 
 // ── Public Pages ──────────────────────────────────────────────────────────
 
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
 import Home from "./Pages/Home";
 
 // ── Auth Pages ────────────────────────────────────────────────────────────
@@ -121,7 +119,6 @@ function App() {
           <Route path="*" element={<NotFound />} />
 
         </Routes>
-        <Footer />
 
       </AuthProvider>
     </Router>

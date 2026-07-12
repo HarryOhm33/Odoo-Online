@@ -461,7 +461,9 @@ const Assets = () => {
               >
                 <option value="">Choose department...</option>
                 {departments.map((dept) => (
-                  <option key={dept._id} value={dept._id}>{dept.name}</option>
+                  <option key={dept._id} value={dept._id}>
+                    {dept.name} {dept.code ? `(${dept.code})` : ""}
+                  </option>
                 ))}
               </select>
             </div>

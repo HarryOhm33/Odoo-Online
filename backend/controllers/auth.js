@@ -154,7 +154,9 @@ module.exports.signup = async (req, res) => {
 module.exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email })
+    .populate("organization")
+    .populate("department", "name");
 
   if (!user)
     return res.status(400).json({ message: "User not found. Contact your administrator." });
@@ -218,7 +220,7 @@ module.exports.verifySession = async (req, res) => {
 
   const user = await User.findById(req.user.id)
     .select("-password")
-    .populate("organization", "name logo industry status")
+    .populate("organization", "name logo industry address status createdAt")
     .populate("department", "name");
 
   if (!user) {

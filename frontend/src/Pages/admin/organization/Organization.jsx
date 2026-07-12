@@ -1,8 +1,12 @@
 // src/pages/admin/organization/Organization.jsx
+import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import PageHeader from "../../../components/common/PageHeader";
-import { FiGlobe, FiEdit2, FiMapPin, FiBriefcase, FiCalendar } from "react-icons/fi";
+import { FiGlobe, FiEdit2 } from "react-icons/fi";
 import Badge from "../../../components/common/Badge";
+import Modal from "../../../components/common/Modal";
+import api from "../../../services/api";
+import { toast } from "react-toastify";
 
 const InfoRow = ({ label, value }) => (
   <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
@@ -12,8 +16,50 @@ const InfoRow = ({ label, value }) => (
 );
 
 const Organization = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const org = user?.organization;
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [address, setAddress] = useState("");
+
+  useEffect(() => {
+    if (org) {
+      setName(org.name || "");
+      setIndustry(org.industry || "");
+      setAddress(org.address || "");
+    }
+  }, [org]);
+
+  const handleOpenEdit = () => {
+    if (org) {
+      setName(org.name || "");
+      setIndustry(org.industry || "");
+      setAddress(org.address || "");
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast.error("Organization name is required.");
+      return;
+    }
+    try {
+      await api.put("/api/organization", {
+        name,
+        industry,
+        address,
+      });
+      toast.success("Organization details updated successfully!");
+      setIsModalOpen(false);
+      await refreshUser();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update organization details.");
+    }
+  };
 
   return (
     <div className="space-y-5">
@@ -21,7 +67,10 @@ const Organization = () => {
         title="Organization"
         subtitle="View and manage your organization profile"
         actions={
-          <button className="inline-flex items-center gap-2 border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <button
+            onClick={handleOpenEdit}
+            className="inline-flex items-center gap-2 border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+          >
             <FiEdit2 className="h-4 w-4" />
             Edit Details
           </button>
@@ -71,6 +120,70 @@ const Organization = () => {
           <Badge label="Admin" color="violet" />
         </div>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Edit Organization Details"
+        footer={
+          <>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+            >
+              Save
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Organization Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. Acme Corp"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Industry
+            </label>
+            <input
+              type="text"
+              value={industry}
+              onChange={(e) => setIndustry(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. Technology"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Address
+            </label>
+            <textarea
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. 123 Main St, New York, NY"
+              rows={3}
+            />
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

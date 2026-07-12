@@ -63,7 +63,7 @@ import Stats from "../components/home/Stats";
 import Features from "../components/home/Features";
 import Workflow from "../components/home/Workflow";
 import CTA from "../components/home/CTA";
-// import Footer from "../components/layout/Footer";
+import Footer from "../components/layout/Footer";
 
 export default function Home() {
   return (
@@ -74,7 +74,7 @@ export default function Home() {
       <Features />
       <Workflow />
       <CTA />
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

@@ -23,11 +23,22 @@ router.post(
   authenticate,
   authorize("Admin"),
   wrapAsync(async (req, res) => {
-    const { name, head, parentDepartment, status } = req.body;
+    const { name, code, head, parentDepartment, status } = req.body;
     if (!name) return res.status(400).json({ message: "Name is required." });
+    if (!code) return res.status(400).json({ message: "Department code is required." });
+
+    // Check for duplicate code in the same organization
+    const existing = await Department.findOne({
+      organization: req.user.organization,
+      code: code.trim(),
+    });
+    if (existing) {
+      return res.status(400).json({ message: "Department code already exists in this organization." });
+    }
 
     const department = await Department.create({
       name,
+      code: code.trim(),
       organization: req.user.organization,
       head: head || null,
       parentDepartment: parentDepartment || null,
@@ -44,7 +55,7 @@ router.put(
   authenticate,
   authorize("Admin"),
   wrapAsync(async (req, res) => {
-    const { name, head, parentDepartment, status } = req.body;
+    const { name, code, head, parentDepartment, status } = req.body;
     const department = await Department.findOne({
       _id: req.params.id,
       organization: req.user.organization,
@@ -53,6 +64,17 @@ router.put(
     if (!department) return res.status(404).json({ message: "Department not found." });
 
     if (name) department.name = name;
+    if (code) {
+      const existing = await Department.findOne({
+        organization: req.user.organization,
+        code: code.trim(),
+        _id: { $ne: req.params.id },
+      });
+      if (existing) {
+        return res.status(400).json({ message: "Department code already exists in this organization." });
+      }
+      department.code = code.trim();
+    }
     if (head !== undefined) department.head = head || null;
     if (parentDepartment !== undefined) department.parentDepartment = parentDepartment || null;
     if (status) department.status = status;

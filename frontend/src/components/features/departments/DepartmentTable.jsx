@@ -3,6 +3,7 @@ import Table from "../../common/Table";
 import Badge from "../../common/Badge";
 
 const columns = [
+  { key: "code",        label: "Code",        render: (v) => v || "—" },
   { key: "name",        label: "Department Name" },
   { key: "head",        label: "Head",        render: (v) => v?.name || "—" },
   { key: "employeeCount",label: "Employees",  render: (v) => v ?? "—" },

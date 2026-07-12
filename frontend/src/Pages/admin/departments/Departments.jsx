@@ -18,6 +18,7 @@ const Departments = () => {
 
   // Form State
   const [name, setName]                         = useState("");
+  const [code, setCode]                         = useState("");
   const [head, setHead]                         = useState("");
   const [parentDepartment, setParentDepartment] = useState("");
   const [status, setStatus]                     = useState("Active");
@@ -45,6 +46,7 @@ const Departments = () => {
   const handleOpenCreate = () => {
     setEditingDept(null);
     setName("");
+    setCode("");
     setHead("");
     setParentDepartment("");
     setStatus("Active");
@@ -54,6 +56,7 @@ const Departments = () => {
   const handleOpenEdit = (dept) => {
     setEditingDept(dept);
     setName(dept.name || "");
+    setCode(dept.code || "");
     setHead(dept.head?._id || dept.head || "");
     setParentDepartment(dept.parentDepartment?._id || dept.parentDepartment || "");
     setStatus(dept.status || "Active");
@@ -65,6 +68,7 @@ const Departments = () => {
     try {
       const payload = {
         name,
+        code,
         head: head || null,
         parentDepartment: parentDepartment || null,
         status,
@@ -85,7 +89,8 @@ const Departments = () => {
   };
 
   const filteredDepts = departments.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase())
+    d.name.toLowerCase().includes(search.toLowerCase()) ||
+    (d.code && d.code.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -155,6 +160,20 @@ const Departments = () => {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
+              Department Code *
+            </label>
+            <input
+              type="text"
+              required
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. ENG"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
               Department Head
             </label>
             <select
@@ -185,7 +204,7 @@ const Departments = () => {
                 .filter((d) => !editingDept || d._id !== editingDept._id)
                 .map((d) => (
                   <option key={d._id} value={d._id}>
-                    {d.name}
+                    {d.name} {d.code ? `(${d.code})` : ""}
                   </option>
                 ))}
             </select>

@@ -125,7 +125,7 @@ module.exports.getEmployee = async (req, res) => {
 // Access: Admin only
 // ─────────────────────────────────────────────────────────────────────────────
 module.exports.updateEmployee = async (req, res) => {
-  const { role, department, status } = req.body;
+  const { name, email, role, department, status } = req.body;
 
   const employee = await User.findOne({
     _id: req.params.id,
@@ -136,8 +136,21 @@ module.exports.updateEmployee = async (req, res) => {
     return res.status(404).json({ message: "Employee not found." });
   }
 
+  if (name) employee.name = name.trim();
+  
+  if (email) {
+    const targetEmail = email.trim().toLowerCase();
+    if (targetEmail !== employee.email.toLowerCase()) {
+      const existing = await User.findOne({ email: targetEmail });
+      if (existing) {
+        return res.status(409).json({ message: "A user with this email already exists." });
+      }
+      employee.email = targetEmail;
+    }
+  }
+
   if (role) employee.role = role;
-  if (department !== undefined) employee.department = department;
+  if (department !== undefined) employee.department = department || null;
   if (status) employee.status = status;
 
   await employee.save();

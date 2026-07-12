@@ -60,6 +60,8 @@ const Employees = () => {
   const handleOpenEdit = (emp) => {
     setIsCreateMode(false);
     setEditingEmp(emp);
+    setCreateName(emp.name || "");
+    setCreateEmail(emp.email || "");
     setRole(emp.role || "Employee");
     setDepartment(emp.department?._id || emp.department || "");
     setStatus(emp.status || "Active");
@@ -82,7 +84,13 @@ const Employees = () => {
         });
         toast.success("Employee created! Activation link sent.");
       } else {
+        if (!createName || !createEmail) {
+          toast.error("Name and Email are required.");
+          return;
+        }
         await api.put(`/api/employees/${editingEmp._id}`, {
+          name: createName,
+          email: createEmail,
           role,
           department: department || null,
           status,
@@ -154,43 +162,39 @@ const Employees = () => {
         }
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isCreateMode && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Full Name *
-                </label>
-                <div className="relative">
-                  <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="text"
-                    required
-                    value={createName}
-                    onChange={(e) => setCreateName(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="John Doe"
-                  />
-                </div>
-              </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Full Name *
+            </label>
+            <div className="relative">
+              <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                required
+                value={createName}
+                onChange={(e) => setCreateName(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="John Doe"
+              />
+            </div>
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Email Address *
-                </label>
-                <div className="relative">
-                  <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="email"
-                    required
-                    value={createEmail}
-                    onChange={(e) => setCreateEmail(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="john@organization.com"
-                  />
-                </div>
-              </div>
-            </>
-          )}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Email Address *
+            </label>
+            <div className="relative">
+              <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="email"
+                required
+                value={createEmail}
+                onChange={(e) => setCreateEmail(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="john@organization.com"
+              />
+            </div>
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -220,7 +224,7 @@ const Employees = () => {
               <option value="">No department assigned</option>
               {departments.map((dept) => (
                 <option key={dept._id} value={dept._id}>
-                  {dept.name}
+                  {dept.name} {dept.code ? `(${dept.code})` : ""}
                 </option>
               ))}
             </select>

@@ -231,7 +231,9 @@ const Audits = () => {
               >
                 <option value="">All Departments</option>
                 {departments.map((d) => (
-                  <option key={d._id} value={d._id}>{d.name}</option>
+                  <option key={d._id} value={d._id}>
+                    {d.name} {d.code ? `(${d.code})` : ""}
+                  </option>
                 ))}
               </select>
             </div>
