@@ -18,7 +18,8 @@ router.get(
   authorize("Admin"),
   wrapAsync(async (req, res) => {
     try {
-      const organization = new mongoose.Types.ObjectId(req.user.organization);
+      const orgId = req.user.organization?._id || req.user.organization;
+      const organization = new mongoose.Types.ObjectId(orgId);
 
       // Start of current month
       const startOfMonth = new Date();

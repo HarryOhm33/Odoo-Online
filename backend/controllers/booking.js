@@ -4,7 +4,7 @@ const Asset = require("../models/asset");
 module.exports.getBookings = async (req, res) => {
   const bookings = await Booking.find({ organization: req.user.organization })
     .populate("asset", "name assetTag")
-    .populate("user", "name email");
+    .populate("user", "name email department");
   res.status(200).json({ success: true, bookings });
 };
 

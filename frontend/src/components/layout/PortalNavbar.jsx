@@ -55,7 +55,7 @@ const PortalNavbar = ({ onMobileMenuOpen }) => {
 
   const markAllAsRead = async () => {
     try {
-      await api.put("/api/notifications/mark-all-read");
+      await api.put("/api/notifications/read-all");
       setNotifications(notifications.map(n => ({ ...n, isRead: true })));
       toast.success("All notifications marked as read");
     } catch (err) {
@@ -136,7 +136,7 @@ const PortalNavbar = ({ onMobileMenuOpen }) => {
                         {notif.message}
                       </p>
                       <span className="text-xs text-slate-400 mt-1 block">
-                        {new Date(notif.createdAt).toLocaleDateString()} {new Date(notif.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        {new Date(notif.createdAt).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: '2-digit', minute:'2-digit' })}
                       </span>
                     </div>
                   ))

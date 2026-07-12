@@ -25,6 +25,7 @@ const notificationRoute = require("./routes/notificationRoute");
 const organizationRoute = require("./routes/organizationRoute");
 const dashboardRoute = require("./routes/dashboardRoute");
 const analyticsRoute = require("./routes/analyticsRoute");
+const transferRoute = require("./routes/transferRoute");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -50,6 +51,7 @@ app.use("/api/notifications", notificationRoute);
 app.use("/api/organization", organizationRoute);
 app.use("/api/dashboard", dashboardRoute);
 app.use("/api/analytics", analyticsRoute);
+app.use("/api/transfers", transferRoute);
 
 
 app.all("*", (req, res, next) => {

@@ -4,11 +4,19 @@ import { FiBox, FiTag, FiUser } from "react-icons/fi";
 
 const statusColor = { Available: "green", Allocated: "blue", Maintenance: "amber", Retired: "red" };
 
-const AssetCard = ({ asset, onClick }) => (
+const AssetCard = ({ asset, onClick, onEdit }) => (
   <div
     onClick={() => onClick?.(asset)}
-    className={`bg-white rounded-lg border border-slate-200 shadow-sm p-4 ${onClick ? "cursor-pointer hover:shadow-md hover:border-blue-300 transition-all" : ""}`}
+    className={`bg-white rounded-lg border border-slate-200 shadow-sm p-4 relative ${onClick ? "cursor-pointer hover:shadow-md hover:border-blue-300 transition-all" : ""}`}
   >
+    {onEdit && (
+      <button
+        onClick={(e) => { e.stopPropagation(); onEdit(asset); }}
+        className="absolute bottom-4 right-4 text-xs font-medium text-blue-600 hover:text-blue-800"
+      >
+        Edit
+      </button>
+    )}
     <div className="flex items-start justify-between gap-2 mb-3">
       <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
         <FiBox className="h-5 w-5 text-blue-600" />

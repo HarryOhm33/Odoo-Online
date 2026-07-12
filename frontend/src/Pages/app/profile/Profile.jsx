@@ -73,7 +73,7 @@ const Profile = () => {
             label="Member Since"
             value={
               user?.createdAt
-                ? new Date(user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })
+                ? new Date(user.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" })
                 : "—"
             }
           />

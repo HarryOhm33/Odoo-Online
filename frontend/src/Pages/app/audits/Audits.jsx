@@ -9,8 +9,9 @@ import api from "../../../services/api";
 import { FiPlus, FiCheckSquare, FiXOctagon, FiAlertCircle, FiClipboard } from "react-icons/fi";
 import { toast } from "react-toastify";
 import usePermissions from "../../../hooks/usePermissions";
+import { useAuth } from "../../../contexts/AuthContext";
 
-const auditedAssetColumns = (onVerify, isClosed, canManage) => [
+const auditedAssetColumns = (onVerify, isClosed, canManage, user, auditAuditors = []) => [
   { key: "asset", label: "Asset Tag", render: (v) => v?.assetTag || "—" },
   { key: "assetName", label: "Asset Name", render: (_, row) => row.asset?.name || "—" },
   {
@@ -22,8 +23,10 @@ const auditedAssetColumns = (onVerify, isClosed, canManage) => [
   {
     key: "actions",
     label: "Verify Action",
-    render: (_, row) => (!isClosed && canManage) ? (
-      <div className="flex gap-1.5">
+    render: (_, row) => {
+      const canVerifyAsset = !isClosed && (canManage || auditAuditors.includes(user?.id) || row.asset?.assignedTo === user?.id);
+      return canVerifyAsset ? (
+        <div className="flex gap-1.5">
         <button
           onClick={() => onVerify(row.asset?._id, "Verified")}
           className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2 py-1 rounded text-xs font-semibold cursor-pointer"
@@ -43,11 +46,13 @@ const auditedAssetColumns = (onVerify, isClosed, canManage) => [
           Damaged
         </button>
       </div>
-    ) : (isClosed ? "Audit Locked" : "—"),
+    ) : (isClosed ? "Audit Locked" : "—");
+    }
   },
 ];
 
 const Audits = () => {
+  const { user } = useAuth();
   const { can } = usePermissions();
   const [audits, setAudits]           = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -190,7 +195,7 @@ const Audits = () => {
         className="max-w-sm"
       />
 
-      <AuditTable audits={filteredAudits} loading={loading} onRowClick={handleOpenChecklist} />
+      <AuditTable audits={filteredAudits} loading={loading} onActionClick={handleOpenChecklist} />
 
       {/* MODAL 1: Create Audit Cycle */}
       <Modal
@@ -340,8 +345,11 @@ const Audits = () => {
           </div>
 
           <Table
-            columns={auditedAssetColumns(handleVerifyAsset, selectedAudit?.status === "Completed", canManage)}
-            rows={selectedAudit?.auditedAssets || []}
+            columns={auditedAssetColumns(handleVerifyAsset, selectedAudit?.status === "Completed", canManage, user, selectedAudit?.auditors || [])}
+            rows={(selectedAudit?.auditedAssets || []).filter(a => {
+              if (canManage || (selectedAudit?.auditors || []).includes(user.id)) return true;
+              return a.asset?.assignedTo === user.id;
+            })}
             emptyMessage="No scoped assets detected under this audit department/location."
           />
         </div>

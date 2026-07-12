@@ -143,3 +143,29 @@ module.exports.returnAsset = async (req, res) => {
 
   res.status(200).json({ success: true, asset });
 };
+
+module.exports.updateAsset = async (req, res) => {
+  const { name, category, serialNumber, acquisitionDate, acquisitionCost, condition, location, photo, sharedBookable, customAttributes, status } = req.body;
+  
+  const asset = await Asset.findOne({
+    _id: req.params.id,
+    organization: req.user.organization,
+  });
+
+  if (!asset) return res.status(404).json({ message: "Asset not found." });
+
+  if (name) asset.name = name;
+  if (category) asset.category = category;
+  if (serialNumber !== undefined) asset.serialNumber = serialNumber;
+  if (acquisitionDate !== undefined) asset.acquisitionDate = acquisitionDate ? new Date(acquisitionDate) : null;
+  if (acquisitionCost !== undefined) asset.acquisitionCost = acquisitionCost ? Number(acquisitionCost) : null;
+  if (condition) asset.condition = condition;
+  if (location !== undefined) asset.location = location;
+  if (photo !== undefined) asset.photo = photo;
+  if (sharedBookable !== undefined) asset.sharedBookable = !!sharedBookable;
+  if (customAttributes !== undefined) asset.customAttributes = customAttributes;
+  if (status) asset.status = status;
+
+  await asset.save();
+  res.status(200).json({ success: true, asset });
+};

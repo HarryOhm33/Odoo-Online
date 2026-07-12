@@ -22,11 +22,11 @@ router.post(
   wrapAsync(createEmployee)
 );
 
-// GET    /api/employees          — Admin / DepartmentHead / AssetManager lists all employees
+// GET    /api/employees          — Admin / DepartmentHead / AssetManager / Employee lists all employees
 router.get(
   "/",
   authenticate,
-  authorize("Admin", "DepartmentHead", "AssetManager"),
+  authorize("Admin", "DepartmentHead", "AssetManager", "Employee"),
   wrapAsync(getEmployees)
 );
 

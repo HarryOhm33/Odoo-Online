@@ -118,7 +118,7 @@ const Organization = () => {
                 <InfoRow label="Timezone"   value={org?.timezone}  />
                 <InfoRow
                   label="Created"
-                  value={org?.createdAt ? new Date(org.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "—"}
+                  value={org?.createdAt ? new Date(org.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—"}
                 />
             </div>
           </div>

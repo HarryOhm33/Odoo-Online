@@ -74,6 +74,7 @@ const Sidebar = ({ isOpen, onToggle, isMobileOpen, onMobileClose }) => {
               <NavLink
                 key={item.route}
                 to={item.route}
+                end
                 onClick={onMobileClose}
                 title={collapsed ? item.title : undefined}
                 className={({ isActive }) =>

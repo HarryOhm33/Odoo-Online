@@ -24,6 +24,8 @@ const Assets = () => {
 
   // Create Asset Form Modals
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditing, setIsEditing]                 = useState(false);
+  const [editAssetId, setEditAssetId]             = useState(null);
   const [selectedCategory, setSelectedCategory]   = useState(null);
 
   // Allocate Asset Modal
@@ -83,9 +85,16 @@ const Assets = () => {
       // Filter assets based on permissions
       if (!can("asset:view_all")) {
         if (can("asset:view_dept")) {
-          allAssets = allAssets.filter(a => a.department === user.department || a.assignedTo?._id === user._id);
+          allAssets = allAssets.filter(a => 
+            a.department?._id === user.department || 
+            a.assignedTo?._id === user.id || 
+            a.sharedBookable
+          );
         } else if (can("asset:view_own")) {
-          allAssets = allAssets.filter(a => a.assignedTo?._id === user._id);
+          allAssets = allAssets.filter(a => 
+            a.assignedTo?._id === user.id || 
+            a.sharedBookable
+          );
         }
       }
 
@@ -130,6 +139,8 @@ const Assets = () => {
   };
 
   const handleOpenRegister = () => {
+    setIsEditing(false);
+    setEditAssetId(null);
     setName("");
     setCategoryId("");
     setSelectedCategory(null);
@@ -141,6 +152,24 @@ const Assets = () => {
     setPhoto("");
     setSharedBookable(false);
     setCustomFieldsValues({});
+    setIsCreateModalOpen(true);
+  };
+
+  const handleOpenEdit = (asset) => {
+    setIsEditing(true);
+    setEditAssetId(asset._id);
+    setName(asset.name || "");
+    const catId = asset.category?._id || asset.category || "";
+    setCategoryId(catId);
+    setSelectedCategory(categories.find(c => c._id === catId) || null);
+    setSerialNumber(asset.serialNumber || "");
+    setAcquisitionDate(asset.acquisitionDate ? new Date(asset.acquisitionDate).toISOString().split('T')[0] : "");
+    setAcquisitionCost(asset.acquisitionCost || "");
+    setCondition(asset.condition || "Good");
+    setLocation(asset.location || "");
+    setPhoto(asset.photo || "");
+    setSharedBookable(!!asset.sharedBookable);
+    setCustomFieldsValues(asset.customAttributes || {});
     setIsCreateModalOpen(true);
   };
 
@@ -160,8 +189,13 @@ const Assets = () => {
         customAttributes: customFieldsValues,
       };
 
-      await api.post("/api/assets", payload);
-      toast.success("Asset registered successfully!");
+      if (isEditing) {
+        await api.put(`/api/assets/${editAssetId}`, payload);
+        toast.success("Asset updated successfully!");
+      } else {
+        await api.post("/api/assets", payload);
+        toast.success("Asset registered successfully!");
+      }
       setIsCreateModalOpen(false);
       fetchAllData();
     } catch (err) {
@@ -277,15 +311,7 @@ const Assets = () => {
         <AssetTable
           assets={filteredAssets}
           loading={loading}
-          onRowClick={(asset) => {
-            if (canAllocate) {
-              if (asset.status === "Available") {
-                handleOpenAllocate(asset);
-              } else if (asset.status === "Allocated") {
-                handleOpenReturn(asset);
-              }
-            }
-          }}
+          onEdit={can("asset:edit") ? handleOpenEdit : undefined}
         />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -293,15 +319,7 @@ const Assets = () => {
             <AssetCard
               key={asset._id}
               asset={asset}
-              onClick={(a) => {
-                if (canAllocate) {
-                  if (a.status === "Available") {
-                    handleOpenAllocate(a);
-                  } else if (a.status === "Allocated") {
-                    handleOpenReturn(a);
-                  }
-                }
-              }}
+              onEdit={can("asset:edit") ? handleOpenEdit : undefined}
             />
           ))}
           {filteredAssets.length === 0 && (
@@ -316,7 +334,7 @@ const Assets = () => {
       <Modal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        title="Register New Asset"
+        title={isEditing ? "Edit Asset" : "Register New Asset"}
         footer={
           <>
             <button
@@ -329,7 +347,7 @@ const Assets = () => {
               onClick={handleRegisterSubmit}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
             >
-              Register
+              {isEditing ? "Save Changes" : "Register"}
             </button>
           </>
         }

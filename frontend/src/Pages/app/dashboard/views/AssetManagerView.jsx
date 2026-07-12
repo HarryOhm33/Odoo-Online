@@ -1,8 +1,12 @@
-import { FiBox, FiRefreshCw, FiCalendar, FiTool, FiClipboard, FiFileText } from "react-icons/fi";
+import { FiBox, FiRefreshCw, FiCalendar, FiTool, FiClipboard, FiFileText, FiUsers, FiCheckSquare, FiBell } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import StatCard from "../../../../components/common/StatCard";
 
-const AssetManagerView = () => {
+const iconMap = {
+  FiBox, FiRefreshCw, FiCalendar, FiTool, FiClipboard, FiFileText, FiUsers, FiCheckSquare, FiBell
+};
+
+const AssetManagerView = ({ stats }) => {
   return (
     <div className="space-y-6">
       {/* Quick Actions */}
@@ -24,11 +28,16 @@ const AssetManagerView = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Assets Available" value="42" icon={FiBox} color="blue" />
-        <StatCard title="Assets Allocated" value="128" icon={FiRefreshCw} color="indigo" />
-        <StatCard title="Pending Returns" value="5" icon={FiCalendar} color="amber" />
-        <StatCard title="Pending Maintenance" value="3" icon={FiTool} color="rose" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {stats?.kpis?.map((kpi, index) => (
+          <StatCard
+            key={index}
+            title={kpi.title}
+            value={kpi.value}
+            icon={iconMap[kpi.icon] || FiBox}
+            color={kpi.color}
+          />
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">

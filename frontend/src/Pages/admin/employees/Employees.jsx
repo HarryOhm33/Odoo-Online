@@ -404,7 +404,7 @@ const Employees = () => {
               </div>
               <div className="flex items-center gap-3 text-sm text-slate-600">
                 <FiCalendar className="text-slate-400" />
-                <span>Joined {new Date(selectedEmp.createdAt).toLocaleDateString()}</span>
+                <span>Joined {new Date(selectedEmp.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" })}</span>
               </div>
             </div>
 

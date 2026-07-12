@@ -10,6 +10,7 @@ const Booking = require("../models/booking");
 const MaintenanceRequest = require("../models/maintenanceRequest");
 const AuditCycle = require("../models/auditCycle");
 const Notification = require("../models/notification");
+const Transfer = require("../models/transfer");
 
 // GET dashboard statistics based on role
 router.get(
@@ -148,8 +149,11 @@ router.get(
         if (myDeptId) {
           const deptUsers = await User.find({ department: myDeptId }).select("_id");
           const deptUserIds = deptUsers.map((u) => u._id);
-          pendingTransfers = await MaintenanceRequest.countDocuments({
-            reportedBy: { $in: deptUserIds },
+          pendingTransfers = await Transfer.countDocuments({
+            $or: [
+              { fromUser: { $in: deptUserIds } },
+              { toDepartment: myDeptId }
+            ],
             organization,
             status: "Pending",
           });
@@ -166,7 +170,7 @@ router.get(
           Asset.countDocuments({ status: "Available", organization }),
           Asset.countDocuments({ status: "Allocated", organization }),
           MaintenanceRequest.countDocuments({ organization, status: { $in: ["Pending", "In Progress", "Technician Assigned"] } }),
-          MaintenanceRequest.countDocuments({ organization, status: "Pending" }),
+          Transfer.countDocuments({ organization, status: "Pending" }),
           AuditCycle.countDocuments({ organization, status: { $in: ["Planned", "In Progress"] } }),
         ]);
 

@@ -8,10 +8,12 @@ const {
   createAsset,
   allocateAsset,
   returnAsset,
+  updateAsset,
 } = require("../controllers/asset");
 
 router.get("/", authenticate, wrapAsync(getAssets));
 router.post("/", authenticate, authorize("AssetManager", "Admin"), wrapAsync(createAsset));
+router.put("/:id", authenticate, authorize("AssetManager", "Admin"), wrapAsync(updateAsset));
 router.post("/:id/allocate", authenticate, authorize("AssetManager", "Admin"), wrapAsync(allocateAsset));
 router.post("/:id/return", authenticate, authorize("AssetManager", "Admin"), wrapAsync(returnAsset));
 

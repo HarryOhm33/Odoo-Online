@@ -5,7 +5,7 @@ module.exports.getAudits = async (req, res) => {
   const audits = await AuditCycle.find({ organization: req.user.organization })
     .populate("auditors", "name email")
     .populate("scopeDepartment", "name")
-    .populate("auditedAssets.asset", "name assetTag status");
+    .populate("auditedAssets.asset", "name assetTag status assignedTo");
   res.status(200).json({ success: true, audits });
 };
 
@@ -51,12 +51,17 @@ module.exports.updateAuditAssetStatus = async (req, res) => {
 
   if (!audit) return res.status(404).json({ message: "Audit cycle not found." });
 
-  if (!audit.auditors.includes(req.user.id) && !["Admin", "AssetManager"].includes(req.user.role)) {
-    return res.status(403).json({ message: "You are not authorized to perform audits on this cycle." });
-  }
-
   const item = audit.auditedAssets.find((a) => a.asset.toString() === req.params.assetId);
   if (!item) return res.status(404).json({ message: "Asset not in audit scope." });
+
+  const assetDoc = await Asset.findById(item.asset);
+  const isAssignedToUser = assetDoc && assetDoc.assignedTo && assetDoc.assignedTo.toString() === req.user.id;
+  const isAuditor = audit.auditors.includes(req.user.id);
+  const isManager = ["Admin", "AssetManager"].includes(req.user.role);
+
+  if (!isAuditor && !isManager && !isAssignedToUser) {
+    return res.status(403).json({ message: "You are not authorized to perform audits on this asset." });
+  }
 
   item.status = status;
   item.notes = notes;
@@ -82,8 +87,9 @@ module.exports.closeAudit = async (req, res) => {
   let verifiedCount = 0;
 
   for (const item of audit.auditedAssets) {
-    if (item.status === "Missing") {
+    if (item.status === "Missing" || item.status === "Pending") {
       missingCount++;
+      item.status = "Missing";
       await Asset.findByIdAndUpdate(item.asset, { status: "Lost" });
     } else if (item.status === "Damaged") {
       damagedCount++;
@@ -92,7 +98,7 @@ module.exports.closeAudit = async (req, res) => {
     }
   }
 
-  audit.discrepancyReport = `Audit closed on ${new Date().toLocaleDateString()}. Results: ${verifiedCount} Verified, ${missingCount} Missing, ${damagedCount} Damaged. Missing assets have been flagged as "Lost" in the system.`;
+  audit.discrepancyReport = `Audit closed on ${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" })}. Results: ${verifiedCount} Verified, ${missingCount} Missing, ${damagedCount} Damaged. Missing assets have been flagged as "Lost" in the system.`;
 
   await audit.save();
   res.status(200).json({ success: true, audit });

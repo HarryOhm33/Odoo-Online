@@ -9,7 +9,7 @@ const {
 } = require("../controllers/notification");
 
 router.get("/", authenticate, wrapAsync(getNotifications));
-router.put("/:id/read", authenticate, wrapAsync(readNotification));
 router.put("/read-all", authenticate, wrapAsync(readAllNotifications));
+router.put("/:id/read", authenticate, wrapAsync(readNotification));
 
 module.exports = router;

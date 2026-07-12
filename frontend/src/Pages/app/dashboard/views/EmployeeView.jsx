@@ -1,8 +1,12 @@
-import { FiBox, FiCalendar, FiTool, FiBell } from "react-icons/fi";
+import { FiBox, FiCalendar, FiTool, FiBell, FiUsers, FiRefreshCw, FiCheckSquare, FiClipboard } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import StatCard from "../../../../components/common/StatCard";
 
-const EmployeeView = () => {
+const iconMap = {
+  FiBox, FiCalendar, FiTool, FiBell, FiUsers, FiRefreshCw, FiCheckSquare, FiClipboard
+};
+
+const EmployeeView = ({ stats }) => {
   return (
     <div className="space-y-6">
       {/* Quick Actions */}
@@ -19,10 +23,15 @@ const EmployeeView = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="My Assets" value="3" icon={FiBox} color="blue" />
-        <StatCard title="Upcoming Returns" value="1" icon={FiCalendar} color="amber" />
-        <StatCard title="Current Bookings" value="0" icon={FiCalendar} color="green" />
-        <StatCard title="Maintenance Requests" value="1" icon={FiTool} color="rose" />
+        {stats?.kpis?.map((kpi, index) => (
+          <StatCard
+            key={index}
+            title={kpi.title}
+            value={kpi.value}
+            icon={iconMap[kpi.icon] || FiBox}
+            color={kpi.color}
+          />
+        ))}
       </div>
 
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5">

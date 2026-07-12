@@ -148,11 +148,8 @@ const Maintenance = () => {
       <MaintenanceTable
         records={filteredReqs}
         loading={loading}
-        onRowClick={(req) => {
-          if (canApprove && ["Pending", "Approved", "Technician Assigned", "In Progress"].includes(req.status)) {
-            handleOpenAction(req);
-          }
-        }}
+        canApprove={canApprove}
+        onActionClick={(req) => handleOpenAction(req)}
       />
 
       {/* Modal 1: Create Request */}

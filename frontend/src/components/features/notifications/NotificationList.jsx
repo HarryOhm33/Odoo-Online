@@ -39,7 +39,7 @@ const NotificationList = ({ notifications = [], loading, onMarkRead }) => {
               {n.message}
             </p>
             <p className="text-xs text-slate-400 mt-0.5">
-              {n.createdAt ? new Date(n.createdAt).toLocaleString() : "Just now"}
+              {n.createdAt ? new Date(n.createdAt).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "Just now"}
             </p>
           </div>
           {!n.isRead && onMarkRead && (

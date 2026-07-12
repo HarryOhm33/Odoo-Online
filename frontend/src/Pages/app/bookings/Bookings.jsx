@@ -16,8 +16,8 @@ const statusColor = { Upcoming: "blue", Ongoing: "green", Completed: "slate", Ca
 const columns = (onCancel, canCancel) => [
   { key: "asset",   label: "Resource",   render: (v) => v ? `${v.name} (${v.assetTag})` : "—" },
   { key: "user",    label: "Booked By",  render: (v) => v?.name || "—" },
-  { key: "startDate",  label: "Start Time",  render: (v) => v ? new Date(v).toLocaleString() : "—" },
-  { key: "endDate",    label: "End Time",    render: (v) => v ? new Date(v).toLocaleString() : "—" },
+  { key: "startDate",  label: "Start Time",  render: (v) => v ? new Date(v).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—" },
+  { key: "endDate",    label: "End Time",    render: (v) => v ? new Date(v).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—" },
   { key: "purpose",    label: "Purpose" },
   { key: "status",     label: "Status",     render: (v) => <Badge label={v} color={statusColor[v] || "slate"} /> },
   {
@@ -65,16 +65,19 @@ const Bookings = () => {
       // Filter based on permissions
       if (!can("booking:view_all")) {
         if (can("booking:department")) {
-          // Assume backend populate user department, fallback to filtering by own
-          allBookings = allBookings.filter(b => b.user?.department === user.department || b.user?._id === user.id);
+          // Compare object ID if department is populated in AuthContext
+          const userDeptId = typeof user.department === "object" ? user.department?._id : user.department;
+          allBookings = allBookings.filter(b => b.user?.department === userDeptId || b.user?._id === user.id);
         } else {
           allBookings = allBookings.filter(b => b.user?._id === user.id);
         }
       }
       
       setBookings(allBookings);
-      // Filter assets that are marked bookable
-      const bookables = (assetRes.data.assets || []).filter((a) => a.sharedBookable);
+      // Filter assets that are marked bookable and are not permanently allocated
+      const bookables = (assetRes.data.assets || []).filter(
+        (a) => a.sharedBookable && (a.status === "Available" || a.status === "Reserved")
+      );
       setAssets(bookables);
     } catch (err) {
       toast.error("Failed to load booking details.");
@@ -129,7 +132,7 @@ const Bookings = () => {
           <div>
             <p className="font-semibold">{err.response.data.message}</p>
             <p className="text-xs">
-              Overlap slot: {new Date(err.response.data.overlappingBooking.startDate).toLocaleString()} - {new Date(err.response.data.overlappingBooking.endDate).toLocaleString()}
+              Overlap slot: {new Date(err.response.data.overlappingBooking.startDate).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })} - {new Date(err.response.data.overlappingBooking.endDate).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}
             </p>
           </div>
         );
