@@ -21,7 +21,7 @@ export default function DashboardPreview() {
           duration: 4,
           repeat: Infinity,
         }}
-        className="absolute -top-5 right-0 z-20 hidden rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-xl lg:block"
+        className="absolute -top-4 -right-6 z-20 hidden rounded-2xl border border-white/10 bg-[#111827]/90 py-4 px-4 backdrop-blur-xl lg:block"
       >
         <div className="flex items-center gap-3">
           <CheckCircle2 className="text-green-400" />
@@ -31,7 +31,7 @@ export default function DashboardPreview() {
               Asset Assigned
             </p>
 
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-400">
               Laptop AF-102 allocated
             </p>
           </div>
@@ -64,7 +64,7 @@ export default function DashboardPreview() {
           repeat: Infinity,
           duration: 5,
         }}
-        className="absolute -bottom-6 -left-8 hidden rounded-2xl border border-white/10 bg-[#111827]/90 p-5 backdrop-blur-xl xl:block"
+        className="absolute -bottom-6 -left-8 hidden rounded-2xl border border-white/10 bg-[#111827]/90 py-4 px-4 backdrop-blur-xl xl:block"
       >
         <div className="flex items-center gap-3">
 
@@ -100,7 +100,7 @@ export default function DashboardPreview() {
           repeat: Infinity,
           duration: 4,
         }}
-        className="absolute -bottom-6 right-0 hidden rounded-2xl border border-white/10 bg-[#111827]/90 p-5 backdrop-blur-xl xl:block"
+        className="absolute -bottom-6 -right-8 hidden rounded-2xl border border-white/10 bg-[#111827]/90 py-4 px-4 backdrop-blur-xl xl:block"
       >
         <div className="flex items-center gap-3">
 
