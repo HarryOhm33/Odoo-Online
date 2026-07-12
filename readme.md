@@ -1,104 +1,124 @@
-<!-- # JWT Authentication with OTP Verification & Cron Jobs Cleanup
+# AssetFlow - Enterprise Asset Management Platform
 
-## 🚀 Project Overview
+AssetFlow (formerly Odoo-Online) is a modern, full-stack Enterprise Asset Management (EAM) platform built with the MERN stack (MongoDB, Express, React, Node.js). It provides organizations with a centralized system to track, allocate, maintain, and audit their physical and digital assets across different departments.
 
-This project implements **JWT-based authentication** with email **OTP verification** and a **cron job** to automatically remove expired OTPs and sessions. Built with **Node.js, Express, and MongoDB**, it ensures secure user authentication while keeping the database clean.
+**🌐 Live Demo:** [https://assetsfloww.netlify.app/](https://assetsfloww.netlify.app/)
+## 🌟 Key Features
 
-## 🔑 Features
+- **Role-Based Access Control (RBAC):** Distinct portals for Admin, Department Head, Asset Manager, and regular Employees.
+- **Asset Lifecycle Management:** Register, track, allocate, and return assets seamlessly.
+- **Asset Transfers:** Request and approve inter-departmental asset transfers.
+- **Maintenance Tracking:** Report issues, assign technicians, and track resolution of damaged assets.
+- **Audit Cycles:** Schedule and execute periodic inventory audits to verify asset presence and condition.
+- **Resource Bookings:** Allow employees to book shared resources (e.g., meeting rooms, projectors) for specific time slots.
+- **Real-Time Notifications:** In-app notification system to alert users of approvals, transfers, and maintenance updates.
+- **Modern UI/UX:** Premium dark-mode interface built with Tailwind CSS, featuring glassmorphism elements, smooth transitions, and responsive design.
 
-- ✅ **User Authentication** using JWT (Login, Register, Logout)
-- ✉️ **OTP-based Email Verification** (instead of links)
-- 🛠️ **Session Management** for tracking logins
-- ⏳ **Automated Cleanup** of expired OTPs & sessions using **cron jobs**
-- ⚡ **Error Handling & Async Wrappers** for cleaner code
+## 🛠️ Tech Stack
 
-## 📂 Project Structure
+**Frontend:**
+- React 19 (Vite)
+- React Router v7
+- Tailwind CSS v4
+- Framer Motion (Animations)
+- Lucide React & React Icons
+- Axios
+
+**Backend:**
+- Node.js & Express.js
+- MongoDB & Mongoose
+- JSON Web Tokens (JWT) & bcryptjs for Authentication
+- Node-cron for background jobs
+- AWS SDK & Nodemailer (Email services)
+
+## 📁 Project Structure
 
 ```
-📁 JWT-AUTH/
-├── 📂 config/
-│   ├── 🗄️ db.js             # MongoDB connection
+├── backend/                  # Node.js Express API
+│   ├── controllers/          # Request handlers
+│   ├── middleware/           # Auth and RBAC middlewares
+│   ├── models/               # Mongoose schemas
+│   ├── routes/               # API endpoints
+│   ├── server.js             # Express app entry point
+│   └── package.json          
 │
-├── 📂 controllers/
-│   ├── 🔑 auth.js           # Authentication logic
-│
-├── 📂 middleware/
-│   ├── 🛡️ authenticate.js   # Middleware to protect routes
-│
-├── 📂 models/
-│   ├── 👤 user.js           # User schema
-│   ├── 🔢 otp.js            # OTP schema
-│   ├── 📌 session.js        # Session schema
-│
-├── 📂 routes/
-│   ├── 🚏 authRoute.js      # Authentication routes
-│
-├── 📂 utils/
-│   ├── ⏳ cronJobs.js       # Cron job to delete expired OTPs & sessions
-│   ├── 📧 sendEmail.js      # Utility for sending OTP emails
-│   ├── 🏗️ wrapAsync.js      # Async wrapper for clean controllers
-│   ├── ⚠️ ExpressError.js   # Custom error handling
-│
-├── 📄 .env                  # Environment variables
-├── 🚀 server.js             # Entry point
-├── 📦 package.json          # Dependencies & scripts
-├── 📜 .gitignore            # Ignore unnecessary files
+├── frontend/                 # React Application
+│   ├── src/
+│   │   ├── components/       # Reusable UI components & layouts
+│   │   ├── config/           # Sidebar & permission configs
+│   │   ├── contexts/         # React Context (Auth)
+│   │   ├── hooks/            # Custom hooks
+│   │   ├── Pages/            # Route pages (Admin, App, Auth, Home)
+│   │   ├── services/         # API client setup (axios)
+│   │   ├── App.jsx           # Main React component & Routing
+│   │   └── main.jsx          # React DOM entry
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+└── README.md
 ```
 
-## 🛠️ Installation & Setup
+## 🚀 Getting Started
 
-### 1️⃣ Clone the Repository
+### Prerequisites
+- Node.js (v18 or higher recommended)
+- MongoDB (Local or Atlas)
+- Git
 
-```sh
-git clone https://github.com/your-username/jwt-auth-otp-cron.git
-cd jwt-auth-otp-cron
-```
+### Installation
 
-### 2️⃣ Install Dependencies
+1. **Clone the repository:**
+   ```bash
+   git clone <your-repo-url>
+   cd Odoo-Online
+   ```
 
-```sh
-npm install
-```
+2. **Backend Setup:**
+   ```bash
+   cd backend
+   npm install
+   ```
+   Create a `.env` file in the `backend` directory and add the following variables:
+   ```env
+   PORT=5000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   # Email Config (Optional)
+   SMTP_HOST=your_smtp_host
+   SMTP_PORT=your_smtp_port
+   SMTP_USER=your_smtp_user
+   SMTP_PASS=your_smtp_pass
+   ```
+   Start the backend development server:
+   ```bash
+   npm run dev
+   ```
 
-### 3️⃣ Setup Environment Variables
+3. **Frontend Setup:**
+   Open a new terminal window/tab:
+   ```bash
+   cd frontend
+   npm install
+   ```
+   Create a `.env` file in the `frontend` directory if you need to override the API URL (defaults to localhost:5000):
+   ```env
+   VITE_API_URL=http://localhost:5000
+   ```
+   Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
 
-Create a **.env** file in the root directory and add:
+4. **Access the Application:**
+   Open your browser and navigate to `http://localhost:5173`.
 
-```
-PORT=your_port
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-EMAIL_USER=your_email
-EMAIL_PASS=your_email_password
-```
+## 👥 User Roles
 
-### 4️⃣ Run the Server
+- **Admin:** Has full access to manage the organization, departments, asset categories, and employee directory.
+- **Asset Manager:** Responsible for global asset registration, allocation, approving transfers, scheduling audits, and overseeing maintenance.
+- **Department Head:** Manages assets and employees within their specific department. Can request asset transfers.
+- **Employee:** Can view their assigned assets, book resources, and submit maintenance requests.
 
-```sh
-npm run dev
-```
-
-The server runs on **http://localhost:5000** by default.
-
-## 📌 API Routes
-
-### **Authentication**
-
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login and get JWT
-- `POST /api/auth/verify-otp` - Verify OTP
-- `POST /api/auth/logout` - Logout
-
-## ⏳ Automated Cron Job Cleanup
-
-- **Runs every X minutes** to delete expired OTPs & sessions.
-- Implemented in `utils/cronJobs.js`.
-
-## 📜 License
+## 📄 License
 
 This project is licensed under the MIT License.
-
----
-
-🌟 **Contributions & Suggestions Welcome!** 🌟
-Feel free to fork, raise issues, or suggest improvements. Let’s connect and learn together! 🚀 -->
