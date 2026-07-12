@@ -7,10 +7,12 @@ const {
   getCategories,
   createCategory,
   updateCategory,
+  deleteCategory,
 } = require("../controllers/assetCategory");
 
 router.get("/", authenticate, wrapAsync(getCategories));
 router.post("/", authenticate, authorize("Admin"), wrapAsync(createCategory));
 router.put("/:id", authenticate, authorize("Admin"), wrapAsync(updateCategory));
+router.delete("/:id", authenticate, authorize("Admin"), wrapAsync(deleteCategory));
 
 module.exports = router;

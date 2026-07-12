@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const EmailToken = require("../models/emailToken");
 const Organization = require("../models/organization");
+const Department = require("../models/department");
 const sendEmail = require("../utils/sendEmail");
 const { generateActivationEmail } = require("../utils/mailTemplates");
 
@@ -86,8 +87,25 @@ module.exports.createEmployee = async (req, res) => {
 // Access: Admin, DepartmentHead
 // ─────────────────────────────────────────────────────────────────────────────
 module.exports.getEmployees = async (req, res) => {
+  let query = { organization: req.user.organization };
+
+  if (req.user.role === "DepartmentHead") {
+    const managedDept = await Department.findOne({ head: req.user.id });
+    if (managedDept) {
+      query.department = managedDept._id;
+    } else {
+      const dbUser = await User.findById(req.user.id);
+      if (dbUser && dbUser.department) {
+        query.department = dbUser.department;
+      } else {
+        // Fallback if no department found
+        query._id = req.user.id; 
+      }
+    }
+  }
+
   // ✅ Organization scoping — NEVER query without org filter
-  const employees = await User.find({ organization: req.user.organization })
+  const employees = await User.find(query)
     .select("-password")
     .populate("department", "name")
     .sort({ createdAt: -1 });

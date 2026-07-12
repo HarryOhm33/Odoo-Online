@@ -399,3 +399,37 @@ module.exports.changePassword = async (req, res) => {
     message: "Password changed successfully.",
   });
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Update Profile (Authenticated user updates their own profile)
+// PUT /api/auth/profile
+// ─────────────────────────────────────────────────────────────────────────────
+module.exports.updateProfile = async (req, res) => {
+  const { name } = req.body;
+
+  if (!name || name.trim() === "") {
+    return res.status(400).json({ message: "Name is required." });
+  }
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  user.name = name.trim();
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Profile updated successfully.",
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      organization: user.organization,
+      department: user.department,
+      status: user.status,
+    }
+  });
+};

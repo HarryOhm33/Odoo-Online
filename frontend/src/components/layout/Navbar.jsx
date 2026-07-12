@@ -336,7 +336,7 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-10 lg:flex">
 
-            {navLinks.map((item) => (
+            {navLinks.filter(item => !(user && item.name === "Admin Setup")).map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -444,7 +444,7 @@ export default function Navbar() {
 
             <div className="space-y-6">
 
-              {navLinks.map((item) => (
+              {navLinks.filter(item => !(user && item.name === "Admin Setup")).map((item) => (
 
                 <Link
                   key={item.name}

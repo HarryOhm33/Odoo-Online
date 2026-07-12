@@ -15,6 +15,7 @@ const {
   forgotPasswordMobile,
   resetPassword,
   changePassword,
+  updateProfile,
 } = require("../controllers/auth");
 
 // ── Organization + Admin Setup (one-time, no auth required) ─────────────────
@@ -43,5 +44,6 @@ router.post("/verify-session", authenticate, wrapAsync(verifySession));
 router.get("/profile", authenticate, (req, res) => {
   res.status(200).json({ valid: true, message: "Welcome!", user: req.user });
 });
+router.put("/profile", authenticate, wrapAsync(updateProfile));
 
 module.exports = router;

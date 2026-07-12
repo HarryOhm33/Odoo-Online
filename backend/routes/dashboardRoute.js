@@ -139,24 +139,34 @@ router.get(
           { title: "Notifications",      value: unreadNotifications, icon: "FiBell",      color: "slate"  },
         ];
       } else if (role === "DepartmentHead") {
+        // Find the department they manage
+        const managedDept = await Department.findOne({ head: userId });
+        const targetDeptId = managedDept ? managedDept._id : myDeptId;
+
         const [deptAssets, activeBookings, unreadNotifications] = await Promise.all([
-          myDeptId ? Asset.countDocuments({ department: myDeptId, organization }) : 0,
+          targetDeptId ? Asset.countDocuments({ department: targetDeptId, organization }) : 0,
           Booking.countDocuments({ user: userId, organization, status: { $in: ["Upcoming", "Ongoing"] } }),
           Notification.countDocuments({ user: userId, organization, isRead: false }),
         ]);
 
         let pendingTransfers = 0;
-        if (myDeptId) {
-          const deptUsers = await User.find({ department: myDeptId }).select("_id");
+        let deptEmployees = [];
+        if (targetDeptId) {
+          const deptUsers = await User.find({ department: targetDeptId }).select("_id");
           const deptUserIds = deptUsers.map((u) => u._id);
           pendingTransfers = await Transfer.countDocuments({
             $or: [
               { fromUser: { $in: deptUserIds } },
-              { toDepartment: myDeptId }
+              { toDepartment: targetDeptId }
             ],
             organization,
             status: "Pending",
           });
+          
+          deptEmployees = await User.find({ department: targetDeptId })
+            .select("name email role status")
+            .sort({ name: 1 })
+            .limit(5);
         }
 
         stats.kpis = [
@@ -165,6 +175,7 @@ router.get(
           { title: "Active Bookings",    value: activeBookings, icon: "FiCalendar",  color: "green"  },
           { title: "Notifications",      value: unreadNotifications, icon: "FiBell",      color: "slate"  },
         ];
+        stats.deptEmployees = deptEmployees;
       } else if (role === "AssetManager") {
         const [availableAssets, allocatedAssets, maintenanceToday, pendingApprovals, activeAudits] = await Promise.all([
           Asset.countDocuments({ status: "Available", organization }),
@@ -200,6 +211,7 @@ router.get(
           kpis: stats.kpis,
           recentNotifications,
           upcomingBookings,
+          deptEmployees: stats.deptEmployees,
         },
       });
     }
