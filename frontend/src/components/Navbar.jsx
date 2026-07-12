@@ -60,16 +60,18 @@ const Navbar = () => {
     }
 
     if (user) {
-      // User is authenticated
+      // User is authenticated — link to correct portal
+      const dashRoute    = user.role === "Admin" ? "/admin/dashboard" : "/app/dashboard";
+      const profileRoute = user.role === "Admin" ? "/admin/settings"  : "/app/profile";
       return [
         { path: "/", label: "Home", icon: <FiHome className="h-5 w-5" /> },
         {
-          path: "/dashboard",
+          path: dashRoute,
           label: "Dashboard",
           icon: <FiGrid className="h-5 w-5" />,
         },
         {
-          path: "/profile",
+          path: profileRoute,
           label: "Profile",
           icon: <FiUser className="h-5 w-5" />,
         },
@@ -79,6 +81,11 @@ const Navbar = () => {
     // User is not authenticated
     return [
       { path: "/", label: "Home", icon: <FiHome className="h-5 w-5" /> },
+      {
+        path: "/setup",
+        label: "Admin Setup",
+        icon: <FiUser className="h-5 w-5" />,
+      },
       {
         path: "/auth/signup",
         label: "Signup",
@@ -104,8 +111,8 @@ const Navbar = () => {
               to="/"
               className="flex-shrink-0 flex items-center text-xl font-bold text-white"
             >
-              <span className="bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                AuthApp
+              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                AssetERP
               </span>
             </Link>
           </div>

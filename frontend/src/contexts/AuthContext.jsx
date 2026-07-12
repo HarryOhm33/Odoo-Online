@@ -1,225 +1,200 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import axios from "axios";
+// src/contexts/AuthContext.jsx
+import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const backendURl = import.meta.env.VITE_BACKEND_URL;
+import api from "../services/api";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState(""); // Store email for OTP-related actions
   const navigate = useNavigate();
 
+  // ── Computed helpers ─────────────────────────────────────────────────────
+  const isAuthenticated = !!user;
+
+  // ── Session restore on mount ──────────────────────────────────────────────
   useEffect(() => {
-    setTimeout(() => {
-      const token = Cookies.get("magicalKey");
-      if (token) {
-        axios
-          .post(
-            `${backendURl}/api/auth/verify-session`,
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-              withCredentials: true,
-            },
-          )
-          .then((res) => {
-            setUser(res.data.user);
-            // toast.success(`Welcome back ${res.data.user.name}`);
-          })
-          .catch((err) => {
-            setUser(null);
-            Cookies.remove("magicalKey");
-            toast.error(
-              err.response?.data.error ||
-                err.response?.data.message ||
-                "Session expired, please log in again. ❌",
-            );
-            navigate("/auth/login");
-          })
-          .finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    }, 500);
+    const token = Cookies.get("magicalKey");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    api
+      .post("/api/auth/verify-session", {})
+      .then((res) => {
+        setUser(res.data.user);
+      })
+      .catch(() => {
+        setUser(null);
+        Cookies.remove("magicalKey");
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  // ── Refresh user from server ──────────────────────────────────────────────
+  const refreshUser = useCallback(async () => {
+    try {
+      const res = await api.post("/api/auth/verify-session", {});
+      setUser(res.data.user);
+      return res.data.user;
+    } catch {
+      setUser(null);
+      Cookies.remove("magicalKey");
+      navigate("/auth/login");
+    }
   }, [navigate]);
 
-  // Signup Function
+  // ── Employee Signup ────────────────────────────────────────────────────────
   const signup = async (name, email, password) => {
     try {
-      const signupData = {
-        name,
-        email,
-        password,
-      };
-
-      //   console.log(signupData);
-
       setLoading(true);
-      const res = await axios.post(
-        `${backendURl}/api/auth/signup`,
-        signupData,
-        { withCredentials: true },
-      );
-
-      // console.log(res);
-
+      const res = await api.post("/api/auth/signup", { name, email, password });
       if (res.data.success) {
-        setLoading(false);
-        setEmail(email); // Store email for OTP verification and resend
+        toast.success(res.data.message || "Signup successful! Please check your email to verify.");
         navigate("/auth/login");
-        toast.success(res.data.message);
       }
+      return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Signup failed ❌");
-      setLoading(false);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Verify accountFunction
-  const verify = async (token, email) => {
-    return await axios.post(
-      `${backendURl}/api/auth/verify`,
-      { token, email },
-      { withCredentials: true },
-    );
-  };
-
-  // Resend OTP Function
-  // const resendOtp = async () => {
-  //   try {
-  //     const res = await axios.post(
-  //       `${backendURl}/api/auth/resend-otp`,
-  //       { email },
-  //       { withCredentials: true }
-  //     );
-  //     toast.success(res.data.message || "OTP resent successfully!");
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.message || "Failed to resend OTP ❌");
-  //     throw error;
-  //   }
-  // };
-
+  // ── Login ─────────────────────────────────────────────────────────────────
   const login = async (email, password) => {
     try {
       setLoading(true);
-      const res = await axios.post(
-        `${backendURl}/api/auth/login`,
-        { email, password },
-        { withCredentials: true },
-      );
+      const res = await api.post("/api/auth/login", { email, password });
 
       if (res.data.user) {
-        setUser(res.data.user);
+        const { user: userData, token } = res.data;
+        setUser(userData);
 
         const isSecure = window.location.protocol === "https:";
-        Cookies.set("magicalKey", res.data.token, {
+        Cookies.set("magicalKey", token, {
           expires: 7,
           path: "/",
           secure: isSecure,
           sameSite: "strict",
         });
 
-        // console.log(res.data.token);
-
         toast.success("Login successful!");
-        setLoading(false);
-        navigate("/dashboard");
-      } else {
-        setLoading(false);
-        toast.error(res.data.error || "Unknown error");
+
+        // ✅ Role-based redirect
+        if (userData.role === "Admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/app/dashboard");
+        }
       }
     } catch (error) {
-      setLoading(false);
       toast.error(error.response?.data?.message || "Login failed ❌");
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
+  // ── Logout ────────────────────────────────────────────────────────────────
   const logout = async () => {
     try {
-      const token = Cookies.get("magicalKey");
-      await axios.post(
-        `${backendURl}/api/auth/logout`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        },
-      );
-
+      await api.post("/api/auth/logout", {});
+    } catch {
+      // Always clear locally even if server call fails
+    } finally {
       setUser(null);
       Cookies.remove("magicalKey");
       toast.info("Logged out successfully! 👋");
       navigate("/auth/login");
-    } catch (error) {
-      toast.error("Logout failed ❌");
     }
   };
 
+  // ── Email Verification ────────────────────────────────────────────────────
+  const verify = async (token, email) => {
+    return await api.post("/api/auth/verify", { token, email });
+  };
+
+  // ── Employee Account Activation ────────────────────────────────────────────
+  const activateAccount = async (token, password) => {
+    return await api.post("/api/auth/activate", { token, password });
+  };
+
+  // ── Forgot Password ────────────────────────────────────────────────────────
   const forgotPassword = async (email) => {
     try {
       setLoading(true);
-      const res = await axios.post(
-        `${backendURl}/api/auth/forgot-password`,
-        { email },
-        { withCredentials: true },
-      );
-
+      const res = await api.post("/api/auth/forgot-password", { email });
       if (res.data.success) {
         toast.success(res.data.message || "Password reset link sent to email");
-        setLoading(false);
       }
     } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to send reset link ❌");
+    } finally {
       setLoading(false);
-      toast.error(
-        error.response?.data?.message || "Failed to send reset link ❌",
-      );
     }
   };
 
+  // ── Reset Password ─────────────────────────────────────────────────────────
   const resetPassword = async (token, email, newPassword) => {
     try {
-      // console.log(token, email, newPassword);
       setLoading(true);
-      const res = await axios.post(
-        `${backendURl}/api/auth/reset-password`,
-        { token, email, newPassword },
-        { withCredentials: true },
-      );
-
+      const res = await api.post("/api/auth/reset-password", { token, email, newPassword });
       if (res.data.success) {
         toast.success(res.data.message || "Password reset successful!");
-        setLoading(false);
         navigate("/auth/login");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Password reset failed ❌");
-      setLoading(false);
       navigate("/auth/forgot-password");
       throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── One-time Org Setup (first-time Admin) ──────────────────────────────────
+  const setupOrganization = async (data) => {
+    try {
+      setLoading(true);
+      const res = await api.post("/api/auth/setup", data);
+      if (res.data.success) {
+        toast.success(res.data.message || "Organization created! Please verify your email to log in.");
+        navigate("/auth/login");
+      }
+      return res.data;
+    } catch (error) {
+      const msg = error.response?.data?.message || "Setup failed ❌";
+      toast.error(msg);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <AuthContext.Provider
       value={{
+        // State
         user,
         loading,
+        isAuthenticated,
+        // Actions
         signup,
-        verify,
-        // resendOtp,
         login,
         logout,
-        email,
+        verify,
+        activateAccount,
         forgotPassword,
         resetPassword,
+        setupOrganization,
+        refreshUser,
       }}
     >
       {children}

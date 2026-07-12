@@ -1,218 +1,251 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
 const User = require("../models/user");
 const Session = require("../models/session");
-// const otpGenerator = require("otp-generator");
-const sendEmail = require("../utils/sendEmail");
 const EmailToken = require("../models/emailToken");
-const crypto = require("crypto");
+const Organization = require("../models/organization");
+
+const sendEmail = require("../utils/sendEmail");
 const {
   generateVerificationEmail,
   generatePasswordResetEmail,
 } = require("../utils/mailTemplates");
 
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 3 — One-time Organization + Admin Setup
+// POST /api/auth/setup
+// ─────────────────────────────────────────────────────────────────────────────
+module.exports.setup = async (req, res) => {
+  // Check if an organization already exists
+  const existingOrg = await Organization.findOne();
+  if (existingOrg) {
+    return res
+      .status(409)
+      .json({ message: "Organization already initialized." });
+  }
+
+  const { orgName, orgIndustry, orgAddress, name, email, password } = req.body;
+
+  if (!orgName || !name || !email || !password) {
+    return res.status(400).json({
+      message: "orgName, name, email, and password are required.",
+    });
+  }
+
+  // Hash the admin password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Create the admin user first (without org yet, we'll update after)
+  const admin = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    isVerified: false, // Admin must verify email first
+    role: "Admin",
+    status: "Active",
+  });
+
+  // Create the organization, referencing the admin as createdBy
+  const organization = await Organization.create({
+    name: orgName,
+    industry: orgIndustry || null,
+    address: orgAddress || null,
+    createdBy: admin._id,
+    status: "Active",
+  });
+
+  // Link the admin back to the organization
+  admin.organization = organization._id;
+  await admin.save();
+
+  // Create email token for verification
+  const tokenVal = crypto.randomBytes(32).toString("hex");
+  await EmailToken.create({
+    email,
+    token: tokenVal,
+    type: "verification",
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes expiry
+  });
+
+  // Send verification email
+  const verificationLink = `${process.env.FRONTEND_URL}/auth/verify?token=${tokenVal}&email=${encodeURIComponent(email)}`;
+  const htmlContent = generateVerificationEmail(name, verificationLink);
+
+  await sendEmail(email, "Verify Your Admin Account", {
+    text: "Please verify your admin email address.",
+    html: htmlContent,
+  });
+
+  return res.status(201).json({
+    success: true,
+    message: "Organization created! Please verify your email address to activate your admin account.",
+  });
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Signup (creates an Employee account associated with the organization)
+// POST /api/auth/signup
+// ─────────────────────────────────────────────────────────────────────────────
 module.exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!name || !email || !password)
-    return res.status(400).json({ message: "All fields are required" });
-
-  const existingUser = await User.findOne({ email });
-  if (existingUser && existingUser.isVerified)
-    return res
-      .status(400)
-      .json({ message: "Email already exists, Please Log in" });
-
-  // Delete old token if exists
-  await EmailToken.deleteOne({ email });
-
-  // Generate token
-  const token = crypto.randomBytes(32).toString("hex");
-
-  // Hash password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Save token &user
-  await EmailToken.create({ email, token });
-
-  if (!existingUser) {
-    await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      isVerified: false,
-    });
-  } else {
-    // Update existing user
-    existingUser.name = name;
-    existingUser.password = hashedPassword;
-    existingUser.isVerified = false; // Reset verification status
-    await existingUser.save();
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "Name, email, and password are required." });
   }
 
-  // Send verification link
-  const verificationLink = `${
-    process.env.FRONTEND_URL
-  }/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
+  // Check if organization exists first
+  const organization = await Organization.findOne();
+  if (!organization) {
+    return res.status(400).json({ message: "System is not yet initialized. Please contact your administrator to perform Setup." });
+  }
 
+  // Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({ message: "Email already exists. Please log in." });
+  }
+
+  // Delete old verification tokens if any
+  await EmailToken.deleteOne({ email, type: "verification" });
+
+  const tokenVal = crypto.randomBytes(32).toString("hex");
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Save verification token
+  await EmailToken.create({
+    email,
+    token: tokenVal,
+    type: "verification",
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 mins
+  });
+
+  // Create the employee user
+  await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    role: "Employee",
+    organization: organization._id,
+    isVerified: false,
+    status: "Inactive",
+  });
+
+  // Send verification email
+  const verificationLink = `${process.env.FRONTEND_URL}/auth/verify?token=${tokenVal}&email=${encodeURIComponent(email)}`;
   const htmlContent = generateVerificationEmail(name, verificationLink);
 
   await sendEmail(email, "Verify Your Account", {
-    text: "Please verify your account using the code/link.",
+    text: "Please verify your email address.",
     html: htmlContent,
   });
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
-    message:
-      "Verification link sent to email(valid for 10 min). Verify to complete signup. Please check your spam folder if you don't see it in your inbox.",
+    message: "Verification link sent to email (valid for 10 min). Verify to complete signup.",
   });
 };
 
-module.exports.signupMobile = async (req, res) => {
-  const { name, email, password } = req.body;
-
-  if (!name || !email || !password)
-    return res.status(400).json({ message: "All fields are required" });
-
-  const existingUser = await User.findOne({ email });
-  if (existingUser && existingUser.isVerified)
-    return res
-      .status(400)
-      .json({ message: "Email already exists, Please Log in" });
-
-  // Delete old token if exists
-  await EmailToken.deleteOne({ email });
-
-  // Generate token
-  const token = crypto.randomBytes(32).toString("hex");
-
-  // Hash password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Save token &user
-  await EmailToken.create({ email, token });
-
-  if (!existingUser) {
-    await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      isVerified: false,
-    });
-  } else {
-    // Update existing user
-    existingUser.name = name;
-    existingUser.password = hashedPassword;
-    existingUser.isVerified = false; // Reset verification status
-    await existingUser.save();
-  }
-
-  // Send verification link
-  const verificationLink = `auth-app://verify?token=${token}&email=${encodeURIComponent(email)}`;
-
-  const htmlContent = generateVerificationEmail(name, verificationLink);
-
-  await sendEmail(email, "Verify Your Account", {
-    text: "Please verify your account using the code/link.",
-    html: htmlContent,
-  });
-
-  res.status(200).json({
-    success: true,
-    message:
-      "Verification link sent to email(valid for 10 min). Verify to complete signup. Please check your spam folder if you don't see it in your inbox.",
-  });
-};
-
-module.exports.verify = async (req, res) => {
-  const { token, email } = req.body;
-
-  if (!token || !email)
-    return res.status(400).json({ message: "Token is required" });
-
-  const record = await EmailToken.findOne({ token: token, email: email });
-  // console.log(record);
-
-  if (!record) {
-    return res.status(400).json({ message: "Invalid or expired token" });
-  }
-
-  // Change user verification status
-  const user = await User.findOne({ email: record.email });
-
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  user.isVerified = true;
-  await user.save();
-
-  // ✅ Delete email token after successful verification
-  await EmailToken.deleteOne({ token: token, email: email });
-
-  res
-    .status(200)
-    .json({ success: true, message: "Signup successful. You can now log in." });
-};
-
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 4 — Login (slim JWT payload)
+// POST /api/auth/login
+// ─────────────────────────────────────────────────────────────────────────────
 module.exports.login = async (req, res) => {
   const { email, password } = req.body;
+
   const user = await User.findOne({ email });
 
   if (!user)
-    return res.status(400).json({ message: "User not found, SignUp First!!" });
+    return res.status(400).json({ message: "User not found. Contact your administrator." });
+
   if (!user.isVerified)
-    return res
-      .status(403)
-      .json({ message: "Please signup or verify your account first." });
+    return res.status(403).json({ message: "Account not yet activated. Please check your email for the activation link." });
+
+  if (user.status === "Inactive")
+    return res.status(403).json({ message: "Your account has been deactivated. Contact your administrator." });
+
+  if (!user.password)
+    return res.status(403).json({ message: "Account not activated. Please check your email for the activation link." });
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.status(400).json({ message: "Incorrect password" });
 
-  // ✅ Generate JWT Token
-  const token = jwt.sign({ user: user }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+  // ✅ Slim JWT payload — only store id, organization, role
+  const payload = {
+    id: user._id,
+    organization: user.organization,
+    role: user.role,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
 
   // ✅ Store session in MongoDB
   await Session.create({ userId: user._id, token });
 
-  // ✅ Set token in HTTP-only cookies
+  // ✅ Set token in HTTP-only cookie
   res.cookie("autoKey", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-  const { password: pwd, ...userData } = user.toObject(); // Exclude password
-
-  res.status(200).json({
+  // Return user details separately (never expose password)
+  return res.status(200).json({
     success: true,
     message: "Login successful",
-    user: userData,
-    token: token,
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      organization: user.organization,
+      department: user.department,
+      status: user.status,
+    },
   });
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 5 — Verify Session
+// POST /api/auth/verify-session  (authenticate middleware required)
+// ─────────────────────────────────────────────────────────────────────────────
 module.exports.verifySession = async (req, res) => {
-  // ✅ Check if user is authenticated
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  const user = await User.findById(req.user._id);
+
+  const user = await User.findById(req.user.id)
+    .select("-password")
+    .populate("organization", "name logo industry status")
+    .populate("department", "name");
+
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  const { password, ...userData } = user.toObject();
-  // ✅ Return user info
-  res.status(200).json({ success: true, user: userData });
+  return res.status(200).json({
+    success: true,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      organization: user.organization,
+      department: user.department,
+      status: user.status,
+    },
+  });
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Logout
+// POST /api/auth/logout  (authenticate middleware required)
+// ─────────────────────────────────────────────────────────────────────────────
 module.exports.logout = async (req, res) => {
   // ✅ Delete the session from MongoDB
-  await Session.deleteOne({ userId: req.user._id, token: req.token });
+  await Session.deleteOne({ userId: req.user.id, token: req.token });
 
   // ✅ Clear the authentication cookie
   res.clearCookie("autoKey", {
@@ -220,33 +253,91 @@ module.exports.logout = async (req, res) => {
     secure: process.env.NODE_ENV === "production",
   });
 
-  res.status(200).json({ success: true, message: "Logged out successfully" });
+  return res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
-// module.exports.resendOTP = async (req, res) => {
-//   const { email } = req.body;
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 7 — Employee Account Activation
+// POST /api/auth/activate
+// Body: { token, password }
+// ─────────────────────────────────────────────────────────────────────────────
+module.exports.activateAccount = async (req, res) => {
+  const { token, password } = req.body;
 
-//   const existingUser = await OTP.findOne({ email });
-//   if (!existingUser)
-//     return res.status(400).json({ message: "No pending verification found." });
+  if (!token || !password) {
+    return res.status(400).json({ message: "Token and password are required." });
+  }
 
-//   // ✅ Generate new OTP
-//   const otp = otpGenerator.generate(6, {
-//     digits: true,
-//     upperCaseAlphabets: false, // ❌ Disable uppercase letters
-//     lowerCaseAlphabets: false, // ❌ Disable lowercase letters
-//     specialChars: false, // ❌ Disable special characters
-//   });
+  const record = await EmailToken.findOne({ token, type: "activation" });
+  if (!record) {
+    return res.status(400).json({ message: "Invalid or expired activation link." });
+  }
 
-//   // ✅ Update OTP in DB
-//   await OTP.updateOne({ email }, { otp });
+  const user = await User.findOne({ email: record.email });
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
 
-//   // ✅ Send OTP via email
-//   await sendEmail(email, "Resend OTP", `Your new OTP is ${otp}`);
+  if (user.isVerified) {
+    return res.status(400).json({ message: "Account is already activated." });
+  }
 
-//   res.status(200).json({ message: "New OTP sent successfully." });
-// };
+  // Hash the new password and activate the account
+  const hashedPassword = await bcrypt.hash(password, 10);
+  user.password = hashedPassword;
+  user.isVerified = true;
+  user.status = "Active";
+  await user.save();
 
+  // Delete the activation token after use
+  await EmailToken.deleteOne({ token, type: "activation" });
+
+  return res.status(200).json({
+    success: true,
+    message: "Account activated successfully. You can now log in.",
+  });
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Email Verification (kept for legacy flows)
+// POST /api/auth/verify
+// ─────────────────────────────────────────────────────────────────────────────
+module.exports.verify = async (req, res) => {
+  const { token, email } = req.body;
+
+  if (!token || !email)
+    return res.status(400).json({ message: "Token is required" });
+
+  const record = await EmailToken.findOne({ token, email });
+
+  if (!record) {
+    return res.status(400).json({ message: "Invalid or expired token" });
+  }
+
+  const user = await User.findOne({ email: record.email });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.isVerified = true;
+  if (user.status === "Inactive") {
+    user.status = "Active";
+  }
+  await user.save();
+
+  // ✅ Delete email token after successful verification
+  await EmailToken.deleteOne({ token, email });
+
+  return res
+    .status(200)
+    .json({ success: true, message: "Verification successful. You can now log in." });
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Forgot Password
+// POST /api/auth/forgot-password
+// ─────────────────────────────────────────────────────────────────────────────
 module.exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -255,19 +346,14 @@ module.exports.forgotPassword = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ message: "User not found" });
 
-  // delete old token if exists
-  await EmailToken.deleteOne({ email });
+  // Delete old reset tokens
+  await EmailToken.deleteOne({ email, type: "reset" });
 
-  // generate token
   const token = crypto.randomBytes(32).toString("hex");
-  await EmailToken.create({ email, token });
+  await EmailToken.create({ email, token, type: "reset" });
 
-  // build reset link
-  const resetLink = `${
-    process.env.FRONTEND_URL
-  }/auth/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
+  const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
-  // send email
   const htmlContent = generatePasswordResetEmail(user.name, resetLink);
 
   await sendEmail(email, "Reset Your Password", {
@@ -275,11 +361,15 @@ module.exports.forgotPassword = async (req, res) => {
     html: htmlContent,
   });
 
-  res
+  return res
     .status(200)
     .json({ success: true, message: "Password reset link sent to email" });
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Forgot Password (Mobile deep-link)
+// POST /api/auth/forgot-password-mobile
+// ─────────────────────────────────────────────────────────────────────────────
 module.exports.forgotPasswordMobile = async (req, res) => {
   const { email } = req.body;
 
@@ -288,17 +378,13 @@ module.exports.forgotPasswordMobile = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ message: "User not found" });
 
-  // delete old token if exists
-  await EmailToken.deleteOne({ email });
+  await EmailToken.deleteOne({ email, type: "reset" });
 
-  // generate token
   const token = crypto.randomBytes(32).toString("hex");
-  await EmailToken.create({ email, token });
+  await EmailToken.create({ email, token, type: "reset" });
 
-  // build reset link
   const resetLink = `auth-app://reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
-  // send email
   const htmlContent = generatePasswordResetEmail(user.name, resetLink);
 
   await sendEmail(email, "Reset Your Password", {
@@ -306,35 +392,37 @@ module.exports.forgotPasswordMobile = async (req, res) => {
     html: htmlContent,
   });
 
-  res
+  return res
     .status(200)
     .json({ success: true, message: "Password reset link sent to email" });
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Reset Password
+// POST /api/auth/reset-password
+// ─────────────────────────────────────────────────────────────────────────────
 module.exports.resetPassword = async (req, res) => {
   const { token, email, newPassword } = req.body;
-  // console.log(token, email, newPassword);
 
   if (!token || !email || !newPassword) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const record = await EmailToken.findOne({ token, email });
+  const record = await EmailToken.findOne({ token, email, type: "reset" });
   if (!record)
     return res.status(400).json({ message: "Invalid or expired token" });
 
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  // hash new password
   const hashed = await bcrypt.hash(newPassword, 10);
   user.password = hashed;
   await user.save();
 
-  // delete token after reset
-  await EmailToken.deleteOne({ token, email });
+  // Delete token after reset
+  await EmailToken.deleteOne({ token, email, type: "reset" });
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "Password reset successful. Please log in.",
   });

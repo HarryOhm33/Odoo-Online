@@ -1,0 +1,213 @@
+// src/pages/admin/departments/Departments.jsx
+import { useState, useEffect } from "react";
+import PageHeader from "../../../components/common/PageHeader";
+import SearchBar from "../../../components/common/SearchBar";
+import DepartmentTable from "../../../components/features/departments/DepartmentTable";
+import Modal from "../../../components/common/Modal";
+import api from "../../../services/api";
+import { FiPlus, FiEdit2 } from "react-icons/fi";
+import { toast } from "react-toastify";
+
+const Departments = () => {
+  const [departments, setDepartments] = useState([]);
+  const [employees, setEmployees]     = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [search, setSearch]           = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingDept, setEditingDept] = useState(null);
+
+  // Form State
+  const [name, setName]                         = useState("");
+  const [head, setHead]                         = useState("");
+  const [parentDepartment, setParentDepartment] = useState("");
+  const [status, setStatus]                     = useState("Active");
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [deptRes, empRes] = await Promise.all([
+        api.get("/api/departments"),
+        api.get("/api/employees"),
+      ]);
+      setDepartments(deptRes.data.departments || []);
+      setEmployees(empRes.data.employees || []);
+    } catch (err) {
+      toast.error("Failed to load department data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleOpenCreate = () => {
+    setEditingDept(null);
+    setName("");
+    setHead("");
+    setParentDepartment("");
+    setStatus("Active");
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (dept) => {
+    setEditingDept(dept);
+    setName(dept.name || "");
+    setHead(dept.head?._id || dept.head || "");
+    setParentDepartment(dept.parentDepartment?._id || dept.parentDepartment || "");
+    setStatus(dept.status || "Active");
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        name,
+        head: head || null,
+        parentDepartment: parentDepartment || null,
+        status,
+      };
+
+      if (editingDept) {
+        await api.put(`/api/departments/${editingDept._id}`, payload);
+        toast.success("Department updated successfully!");
+      } else {
+        await api.post("/api/departments", payload);
+        toast.success("Department created successfully!");
+      }
+      setIsModalOpen(false);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Operation failed.");
+    }
+  };
+
+  const filteredDepts = departments.filter((d) =>
+    d.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-5">
+      <PageHeader
+        title="Departments"
+        subtitle="Manage organizational departments, hierarchy, and heads"
+        actions={
+          <button
+            onClick={handleOpenCreate}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+          >
+            <FiPlus className="h-4 w-4" />
+            New Department
+          </button>
+        }
+      />
+
+      <SearchBar
+        value={search}
+        onChange={setSearch}
+        placeholder="Search departments..."
+        className="w-full max-w-sm"
+      />
+
+      <DepartmentTable
+        departments={filteredDepts}
+        loading={loading}
+        onRowClick={handleOpenEdit}
+      />
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingDept ? "Edit Department" : "New Department"}
+        footer={
+          <>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+            >
+              Save
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Department Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. Engineering"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Department Head
+            </label>
+            <select
+              value={head}
+              onChange={(e) => setHead(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">No head assigned</option>
+              {employees.map((emp) => (
+                <option key={emp._id} value={emp._id}>
+                  {emp.name} ({emp.role})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Parent Department (Hierarchy)
+            </label>
+            <select
+              value={parentDepartment}
+              onChange={(e) => setParentDepartment(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">None</option>
+              {departments
+                .filter((d) => !editingDept || d._id !== editingDept._id)
+                .map((d) => (
+                  <option key={d._id} value={d._id}>
+                    {d.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Status
+            </label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive (Deactivated)</option>
+            </select>
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
+};
+
+export default Departments;
