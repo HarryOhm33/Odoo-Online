@@ -161,7 +161,7 @@ const Maintenance = () => {
           <>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -258,7 +258,7 @@ const Maintenance = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsActionModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+                className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
               >
                 Close
               </button>
@@ -285,9 +285,9 @@ const Maintenance = () => {
         }
       >
         <div className="space-y-4">
-          <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm">
-            <p className="text-slate-400 mb-1"><span className="font-semibold text-slate-700">Issue:</span> {selectedReq?.description || "No description"}</p>
-            <p className="text-slate-400"><span className="font-semibold text-slate-700">Current Status:</span> {selectedReq?.status}</p>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-sm shadow-inner">
+            <p className="text-slate-300 mb-2"><span className="font-semibold text-white">Issue:</span> {selectedReq?.description || "No description"}</p>
+            <p className="text-slate-300"><span className="font-semibold text-white">Current Status:</span> {selectedReq?.status}</p>
           </div>
 
           <div>

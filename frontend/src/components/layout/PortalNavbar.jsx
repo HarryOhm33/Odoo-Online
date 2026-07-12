@@ -2,7 +2,7 @@
 // Top navigation bar inside admin and employee portals.
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiMenu, FiBell, FiChevronDown, FiUser, FiLogOut, FiSettings, FiCheck } from "react-icons/fi";
+import { Menu, Bell, ChevronDown, User, LogOut, Check } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../services/api";
 import { toast } from "react-toastify";
@@ -23,7 +23,6 @@ const getPageTitle = (pathname) => {
     "/app/bookings":       "Resource Bookings",
     "/app/maintenance":    "Maintenance",
     "/app/audits":         "Audit Cycles",
-    "/app/reports":        "Reports",
     "/app/notifications":  "Notifications",
     "/app/profile":        "Profile",
   };
@@ -81,61 +80,61 @@ const PortalNavbar = ({ onMobileMenuOpen }) => {
   const profileRoute = user?.role === "Admin" ? "/admin/settings" : "/app/profile";
 
   return (
-    <header className="h-16 bg-[#08111F]/80 backdrop-blur-md border-b border-white/10 flex items-center px-4 gap-4 flex-shrink-0 z-10 sticky top-0">
+    <header className="h-20 bg-[#08111F]/80 backdrop-blur-2xl border-b border-white/10 flex items-center px-6 gap-4 flex-shrink-0 z-10 sticky top-0 shadow-lg">
       {/* Mobile hamburger */}
       <button
         onClick={onMobileMenuOpen}
-        className="lg:hidden text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+        className="lg:hidden text-slate-400 hover:text-cyan-400 p-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
       >
-        <FiMenu className="h-5 w-5" />
+        <Menu size={20} />
       </button>
 
       {/* Page title */}
-      <h1 className="text-white font-semibold text-base flex-1 truncate">
+      <h1 className="text-white font-bold text-xl flex-1 truncate tracking-tight">
         {pageTitle}
       </h1>
 
       {/* Right actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
         {/* Notifications bell */}
         <div className="relative" ref={notificationsRef}>
           <button 
             onClick={() => { setNotificationsOpen(!notificationsOpen); setDropdownOpen(false); }}
-            className="relative text-slate-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+            className="relative flex items-center justify-center w-10 h-10 text-slate-400 hover:text-cyan-400 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
           >
-            <FiBell className="h-5 w-5" />
+            <Bell size={18} />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-[#08111F]"></span>
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.8)]"></span>
             )}
           </button>
           
           {/* Notifications Dropdown */}
           {notificationsOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-slate-900 rounded-lg shadow-2xl border border-white/10 py-1 z-50 flex flex-col max-h-96">
-              <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-                <h3 className="font-semibold text-white text-sm">Notifications</h3>
+            <div className="absolute right-0 top-full mt-3 w-80 bg-[#0D1728]/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 py-2 z-50 flex flex-col max-h-96 overflow-hidden">
+              <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+                <h3 className="font-bold text-white">Notifications</h3>
                 {unreadCount > 0 && (
                   <button 
                     onClick={markAllAsRead}
-                    className="text-xs text-blue-400 hover:text-blue-300 font-medium cursor-pointer flex items-center gap-1 transition-colors"
+                    className="text-xs text-cyan-400 hover:text-cyan-300 font-medium cursor-pointer flex items-center gap-1 transition-colors"
                   >
-                    <FiCheck /> Mark all read
+                    <Check size={14} /> Mark all read
                   </button>
                 )}
               </div>
               <div className="overflow-y-auto flex-1 custom-scrollbar">
                 {notifications.length === 0 ? (
-                  <p className="text-slate-400 text-sm text-center py-6">No recent notifications</p>
+                  <p className="text-slate-400 text-sm text-center py-8">No recent notifications</p>
                 ) : (
                   notifications.map((notif) => (
                     <div 
                       key={notif._id} 
-                      className={`px-4 py-3 border-b border-white/5 last:border-0 ${notif.isRead ? 'bg-transparent' : 'bg-blue-500/10'}`}
+                      className={`px-5 py-4 border-b border-white/5 last:border-0 ${notif.isRead ? 'bg-transparent' : 'bg-cyan-500/5'}`}
                     >
-                      <p className={`text-sm ${notif.isRead ? 'text-slate-300' : 'text-white font-medium'}`}>
+                      <p className={`text-sm ${notif.isRead ? 'text-slate-400' : 'text-white font-medium'}`}>
                         {notif.message}
                       </p>
-                      <span className="text-xs text-slate-400 mt-1 block">
+                      <span className="text-xs text-slate-500 mt-2 block">
                         {new Date(notif.createdAt).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: '2-digit', minute:'2-digit' })}
                       </span>
                     </div>
@@ -150,46 +149,49 @@ const PortalNavbar = ({ onMobileMenuOpen }) => {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => { setDropdownOpen(!dropdownOpen); setNotificationsOpen(false); }}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+            className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all cursor-pointer"
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg border border-white/10">
-              <span className="text-white text-sm font-semibold">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(59,130,246,.3)]">
+              <span className="text-white text-sm font-bold">
                 {user?.name?.[0]?.toUpperCase() || "U"}
               </span>
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-white text-sm font-medium leading-tight">
+            <div className="hidden sm:block text-left mr-1">
+              <p className="text-white text-sm font-semibold leading-tight">
                 {user?.name}
               </p>
-              <p className="text-slate-400 text-xs leading-tight">{user?.role}</p>
+              <p className="text-slate-400 text-xs leading-tight font-medium mt-0.5">{user?.role}</p>
             </div>
-            <FiChevronDown
-              className={`h-4 w-4 text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+            <ChevronDown
+              size={16}
+              className={`text-slate-400 transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}
             />
           </button>
 
           {/* Dropdown menu */}
           {dropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-52 bg-slate-900 rounded-lg shadow-2xl border border-white/10 py-1 z-50 overflow-hidden">
-              <div className="px-3 py-2 border-b border-white/10 bg-white/5">
-                <p className="text-white text-sm font-medium truncate">{user?.name}</p>
-                <p className="text-slate-400 text-xs truncate">{user?.email}</p>
+            <div className="absolute right-0 top-full mt-3 w-56 bg-[#0D1728]/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 py-2 z-50 overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/10 bg-white/5">
+                <p className="text-white font-semibold truncate">{user?.name}</p>
+                <p className="text-slate-400 text-xs truncate mt-0.5">{user?.email}</p>
               </div>
-              <Link
-                to={profileRoute}
-                onClick={() => setDropdownOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-colors"
-              >
-                <FiUser className="h-4 w-4 text-slate-400" />
-                Profile & Settings
-              </Link>
-              <button
-                onClick={() => { setDropdownOpen(false); logout(); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors cursor-pointer"
-              >
-                <FiLogOut className="h-4 w-4" />
-                Sign Out
-              </button>
+              <div className="p-2 space-y-1">
+                <Link
+                  to={profileRoute}
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-cyan-400 transition-all"
+                >
+                  <User size={16} />
+                  Profile & Settings
+                </Link>
+                <button
+                  onClick={() => { setDropdownOpen(false); logout(); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all cursor-pointer"
+                >
+                  <LogOut size={16} />
+                  Sign Out
+                </button>
+              </div>
             </div>
           )}
         </div>

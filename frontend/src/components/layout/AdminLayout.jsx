@@ -29,7 +29,7 @@ const AdminLayout = () => {
       {/* Main content area */}
       <div
         className={`flex flex-col flex-1 min-w-0 transition-all duration-300 ${
-          sidebarOpen ? "lg:ml-64" : "lg:ml-[68px]"
+          sidebarOpen ? "lg:ml-[280px]" : "lg:ml-[88px]"
         }`}
       >
         {/* Top navbar */}

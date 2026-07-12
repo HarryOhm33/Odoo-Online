@@ -140,10 +140,9 @@ const Audits = () => {
 
   const handleVerifyAsset = async (assetId, status) => {
     try {
-      const notes = prompt("Enter verification notes (optional):") || "";
       const res = await api.put(`/api/audits/${selectedAudit._id}/asset/${assetId}`, {
         status,
-        notes,
+        notes: "",
       });
       toast.success("Asset status logged.");
       // Refresh current modal audit state
@@ -285,9 +284,9 @@ const Audits = () => {
             <label className="block text-sm font-medium text-white mb-1.5">
               Assign Auditors *
             </label>
-            <div className="border border-slate-200 rounded-lg p-3 bg-slate-50/50 max-h-40 overflow-y-auto space-y-2">
+            <div className="border border-white/10 rounded-xl p-3 bg-white/5 max-h-40 overflow-y-auto space-y-2 custom-scrollbar">
               {employees.map((emp) => (
-                <label key={emp._id} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                <label key={emp._id} className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer hover:text-white transition-colors">
                   <input
                     type="checkbox"
                     checked={auditors.includes(emp._id)}

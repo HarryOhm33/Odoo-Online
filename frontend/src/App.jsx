@@ -47,7 +47,7 @@ import Transfers from "./Pages/app/transfers/Transfers";
 import Bookings from "./Pages/app/bookings/Bookings";
 import Maintenance from "./Pages/app/maintenance/Maintenance";
 import Audits from "./Pages/app/audits/Audits";
-import Reports from "./Pages/app/reports/Reports";
+
 import DepartmentEmployees from "./Pages/app/employees/DepartmentEmployees";
 import Notifications from "./Pages/app/notifications/Notifications";
 import Profile from "./Pages/app/profile/Profile";
@@ -111,7 +111,7 @@ function App() {
               <Route path="/app/bookings" element={<Bookings />} />
               <Route path="/app/maintenance" element={<Maintenance />} />
               <Route path="/app/audits" element={<Audits />} />
-              <Route path="/app/reports" element={<Reports />} />
+
               <Route path="/app/employees" element={<DepartmentEmployees />} />
               <Route path="/app/notifications" element={<Notifications />} />
               <Route path="/app/profile" element={<Profile />} />

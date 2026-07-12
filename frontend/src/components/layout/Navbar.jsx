@@ -243,6 +243,14 @@ const navLinks = [
     href: "/",
   },
   {
+    name: "Features",
+    href: "/#features",
+  },
+  {
+    name: "Workflow",
+    href: "/#workflow",
+  },
+  {
     name: "Admin Setup",
     href: "/setup",
   },
@@ -261,9 +269,34 @@ export default function Navbar() {
 
     window.addEventListener("scroll", handleScroll);
 
+    // Handle hash scrolling on load or navigation
+    if (window.location.hash) {
+      const id = window.location.hash.substring(1);
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+
     return () =>
       window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNavClick = (e, href) => {
+    if (href === "/" && window.location.pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (href.startsWith("/#") && window.location.pathname === "/") {
+      e.preventDefault();
+      const id = href.substring(2);
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        window.history.pushState(null, "", href);
+      }
+    }
+    setMobileMenu(false);
+  };
 
   const handleDashboardRedirect = () => {
     if (user.role === "Admin") {
@@ -340,6 +373,7 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 to={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
                 className="relative font-medium text-slate-300 transition hover:text-cyan-400"
               >
                 {item.name}
@@ -449,7 +483,7 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   to={item.href}
-                  onClick={() => setMobileMenu(false)}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className="block text-lg font-medium text-slate-300 transition hover:text-cyan-400"
                 >
 

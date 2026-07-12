@@ -187,7 +187,7 @@ const Bookings = () => {
           <>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>

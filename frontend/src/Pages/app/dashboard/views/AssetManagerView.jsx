@@ -22,9 +22,6 @@ const AssetManagerView = ({ stats }) => {
           <Link to="/app/audits" className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-400 rounded-lg text-sm font-medium hover:bg-amber-500/20 transition-colors">
             <FiClipboard /> Create Audit
           </Link>
-          <Link to="/app/reports" className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-400 rounded-lg text-sm font-medium hover:bg-emerald-500/20 transition-colors">
-            <FiFileText /> Generate Report
-          </Link>
         </div>
       </div>
 

@@ -56,7 +56,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="relative overflow-hidden bg-[#08111F] pt-12 pb-20">
+    <section id="features" className="relative overflow-hidden bg-[#08111F] pt-12 pb-20">
 
       {/* Background Glow */}
 

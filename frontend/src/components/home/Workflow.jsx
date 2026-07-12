@@ -100,7 +100,7 @@ export default function Workflow() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-[#08111F] pt-12 pb-20">
+    <section id="workflow" className="relative overflow-hidden bg-[#08111F] pt-12 pb-20">
       <style>{`
         .custom-scrollbar-hide::-webkit-scrollbar {
           display: none !important;
