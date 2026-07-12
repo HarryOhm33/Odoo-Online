@@ -56,7 +56,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="relative overflow-hidden bg-[#08111F] py-28">
+    <section className="relative overflow-hidden bg-[#08111F] pt-12 pb-20">
 
       {/* Background Glow */}
 
@@ -73,16 +73,10 @@ export default function Features() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: .7 }}
-          className="mx-auto mb-20 max-w-3xl text-center"
+          className="mx-auto mb-12 max-w-3xl text-center"
         >
 
-          <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-300">
-
-            Powerful Features
-
-          </span>
-
-          <h2 className="mt-7 text-4xl font-black text-white md:text-5xl">
+          <h2 className="text-4xl font-black text-white md:text-5xl">
 
             Everything Required
 

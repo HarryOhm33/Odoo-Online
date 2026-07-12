@@ -9,7 +9,7 @@ export default function DashboardPreview() {
       initial={{ opacity: 0, x: 80 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8 }}
-      className="relative w-full max-w-3xl"
+      className="relative w-full max-w-2xl mx-auto lg:mx-0 lg:ml-auto"
     >
       {/* Floating Notification */}
 
@@ -51,7 +51,7 @@ export default function DashboardPreview() {
         }}
         src={dashboard}
         alt="Dashboard Preview"
-        className="rounded-3xl border border-white/10 shadow-[0_20px_80px_rgba(37,99,235,.35)]"
+        className="w-full h-auto rounded-3xl border border-white/10 shadow-[0_20px_80px_rgba(37,99,235,.35)]"
       />
 
       {/* Bottom Left */}
@@ -68,7 +68,7 @@ export default function DashboardPreview() {
       >
         <div className="flex items-center gap-3">
 
-          <Boxes className="text-cyan-400"/>
+          <Boxes className="text-cyan-400" />
 
           <div>
 
@@ -104,7 +104,7 @@ export default function DashboardPreview() {
       >
         <div className="flex items-center gap-3">
 
-          <CalendarDays className="text-green-400"/>
+          <CalendarDays className="text-green-400" />
 
           <div>
 

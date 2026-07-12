@@ -3,7 +3,7 @@ import { ArrowRight, PlayCircle } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="relative overflow-hidden bg-[#08111F] py-28">
+    <section className="relative overflow-hidden bg-[#08111F] py-20">
 
       {/* Background Glow */}
 
@@ -27,13 +27,7 @@ export default function CTA() {
 
           <div className="flex flex-col items-center text-center">
 
-            <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-300">
-
-              Ready to Transform Asset Management?
-
-            </span>
-
-            <h2 className="mt-8 max-w-4xl text-4xl font-black leading-tight text-white md:text-6xl">
+            <h2 className="max-w-4xl text-4xl font-black leading-tight text-white md:text-6xl">
 
               Simplify Your
 

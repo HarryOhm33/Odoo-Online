@@ -40,7 +40,7 @@ const stats = [
 
 export default function Stats() {
   return (
-    <section className="relative bg-[#08111F] py-24">
+    <section className="relative bg-[#08111F] py-16 overflow-hidden">
 
       <div className="absolute inset-0">
 
@@ -56,16 +56,10 @@ export default function Stats() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mb-14 text-center"
+          className="mb-10 text-center"
         >
 
-          <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-300">
-
-            Trusted by Organizations
-
-          </span>
-
-          <h2 className="mt-6 text-4xl font-black text-white md:text-5xl">
+          <h2 className="text-4xl font-black text-white md:text-5xl">
 
             Everything You Need
 

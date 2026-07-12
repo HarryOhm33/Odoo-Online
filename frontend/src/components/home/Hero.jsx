@@ -11,7 +11,7 @@ import {
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#08111F] text-white">
+    <section className="relative min-h-screen overflow-x-hidden bg-[#08111F] text-white">
 
       {/* ================= Background ================= */}
 
@@ -37,7 +37,7 @@ const Hero = () => {
 
       {/* ================= Hero ================= */}
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-between gap-16 px-6 pt-32 lg:flex-row lg:px-12">
+      <div className="relative z-10 mx-auto flex min-h-fit lg:min-h-screen max-w-7xl flex-col items-center justify-between gap-16 px-6 pt-20 pb-12 lg:flex-row lg:px-12 lg:pb-32 lg:pt-32">
 
         {/* ================= Left ================= */}
 
@@ -45,23 +45,8 @@ const Hero = () => {
           initial={{ opacity: 0, x: -60 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: .8 }}
-          className="max-w-2xl"
+          className="max-w-2xl flex flex-col items-center lg:items-start text-center lg:text-left lg:-translate-x-4"
         >
-
-          {/* Badge */}
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: .2 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-500/40 bg-blue-500/10 px-5 py-2 text-sm backdrop-blur-xl"
-          >
-
-            <Sparkles size={18} className="text-cyan-400" />
-
-            Enterprise Asset Management
-
-          </motion.div>
 
           {/* Heading */}
 
@@ -69,7 +54,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: .3 }}
-            className="text-5xl font-black leading-tight md:text-6xl xl:text-7xl"
+            className="text-4xl font-black leading-tight md:text-5xl xl:text-6xl text-center lg:text-left"
           >
 
             Manage Assets
@@ -98,7 +83,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: .5 }}
-            className="mt-8 max-w-xl text-lg leading-8 text-slate-300"
+            className="mt-3 max-w-xl text-base leading-6 text-slate-300 text-center lg:text-left"
           >
 
             AssetFlow simplifies enterprise asset tracking,
@@ -114,7 +99,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: .7 }}
-            className="mt-10 flex flex-col gap-5 sm:flex-row"
+            className="mt-2 flex flex-col gap-5 sm:flex-row justify-center lg:justify-start w-full sm:w-auto"
           >
 
             <button className="group flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-8 py-4 font-semibold shadow-[0_0_40px_rgba(59,130,246,.35)] transition-all duration-300 hover:scale-105">
@@ -144,7 +129,7 @@ const Hero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
-            className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-3"
+            className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3 justify-items-center lg:justify-items-start w-full"
           >
 
             <div className="flex items-center gap-3">
@@ -191,7 +176,7 @@ const Hero = () => {
 
           transition={{ duration: .9 }}
 
-          className="relative flex w-full justify-center lg:w-1/2"
+          className="relative w-full lg:w-1/2 lg:translate-x-8 lg:translate-y-0"
 
         >
 
